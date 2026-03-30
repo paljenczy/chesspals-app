@@ -1,0 +1,195 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "ChessPals",
+  "settingsTooltip": "Settings",
+
+  "navPlayBot": "Play Animal",
+  "navPuzzles": "Puzzles",
+  "navPlayHuman": "Play Human",
+
+  "loginTitle": "Welcome to ChessPals",
+  "loginSubtitle": "Sign in with your Lichess account to play chess, solve puzzles, and challenge opponents.",
+  "loginButton": "Sign in with Lichess",
+  "loginSigningIn": "Signing in...",
+  "loginErrorInvalid": "Sign-in failed. Please try again.",
+  "loginErrorFailed": "Sign-in failed: {error}",
+  "@loginErrorFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "botSelectTitle": "Choose your opponent!",
+  "botSelectSubtitle": "Start easy and work your way up 🌟",
+  "botErrorLoginRequired": "Login required",
+  "botErrorCouldNotStart": "Could not start game",
+  "botRatingLabel": "~{rating} rapid",
+  "@botRatingLabel": {
+    "placeholders": {
+      "rating": { "type": "int" }
+    }
+  },
+
+  "botDifficultyBeginner": "⭐ Beginner",
+  "botDifficultyExplorer": "⭐⭐ Explorer",
+  "botDifficultySpeedy": "⭐⭐ Speedy",
+  "botDifficultyTricky": "⭐⭐⭐ Tricky",
+  "botDifficultyCunning": "⭐⭐⭐ Cunning",
+  "botDifficultySharp": "⭐⭐⭐ Sharp",
+  "botDifficultyFierce": "⭐⭐⭐⭐ Fierce",
+  "botDifficultyFierceplus": "⭐⭐⭐⭐ Fierce+",
+
+  "botDescBee": "I'm just a little bee — I buzz around and make lots of mistakes!",
+  "botDescButterfly": "I flutter around the board — I'm still finding my wings!",
+  "botDescHummingbird": "I move super fast — blink and you'll miss my tricks!",
+  "botDescRabbit": "I hop around quickly — watch out, I can be tricky!",
+  "botDescKangaroo": "I learn by watching — I'll leap ahead when you least expect it!",
+  "botDescDeer": "I play sharp and fast — watch out for my attacks!",
+  "botDescGiraffe": "I see the whole board from up high — I play like a real person!",
+  "botDescTiger": "I pounce when you make a mistake — can you outsmart me?",
+
+  "botNameBee": "Bella the Bee",
+  "botNameButterfly": "Flutter the Butterfly",
+  "botNameHummingbird": "Zip the Hummingbird",
+  "botNameRabbit": "Rosie the Rabbit",
+  "botNameKangaroo": "Kira the Kangaroo",
+  "botNameDeer": "Dino the Deer",
+  "botNameGiraffe": "Gabi the Giraffe",
+  "botNameTiger": "Tara the Tiger",
+
+  "botThinking": "{name} thinking...",
+  "@botThinking": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "offlineStatusYourTurn": "Your turn ♟",
+  "offlineStatusBotThinking": "Bot is thinking...",
+  "offlineStatusYouWon": "You won! 🎉",
+  "offlineStatusBotWins": "Bot wins! Try again 💪",
+  "offlineStatusDraw": "It's a draw! 🤝",
+  "offlineButtonResign": "Resign",
+  "offlineButtonNewGame": "New Game",
+  "offlineTooltipNewGame": "New game",
+
+  "onlineConnecting": "Connecting...",
+  "onlineYourTurn": "Your turn",
+  "onlineYouLabel": "You",
+  "onlineOpponentThinking": "{name} thinking...",
+  "@onlineOpponentThinking": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "onlineOpponentsTurn": "Opponent's turn",
+  "onlineResultWin": "You won! 🎉",
+  "onlineResultLoss": "You lost",
+  "onlineResultDraw": "Draw",
+  "onlineResultGameOver": "Game over",
+  "onlineResignTooltip": "Resign",
+  "onlineResignTitle": "Resign?",
+  "onlineResignContent": "Are you sure you want to give up this game?",
+  "onlineAbortTitle": "Cancel game?",
+  "onlineAbortContent": "The game hasn't really started yet. Do you want to cancel it?",
+  "onlineKeepPlaying": "Keep playing",
+  "onlineCancelGame": "Cancel game",
+  "onlineResignButton": "Resign",
+  "onlinePlayAgain": "Play Again",
+  "onlineYourTurnBadge": "Your turn",
+  "onlineOpponentLabel": "Opponent",
+  "onlineRapidSuffix": "rapid",
+  "onlineConnectionError": "Connection error:\n{error}",
+  "@onlineConnectionError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "onlineRetry": "Retry",
+  "onlineDrawOfferTooltip": "Offer draw",
+  "onlineDrawOfferSent": "Draw offer sent",
+  "onlineDrawOfferReceived": "Your opponent offers a draw",
+  "onlineDrawAccept": "Accept",
+  "onlineDrawDecline": "Decline",
+
+  "playHumanTitle": "Play a Real Person",
+  "playHumanYourRating": "Your rapid rating: {rating} ⚡",
+  "@playHumanYourRating": {
+    "placeholders": {
+      "rating": { "type": "int" }
+    }
+  },
+  "playHumanChooseTime": "Choose how much time each player gets",
+  "playHumanTimeMinutes": "{label} minutes",
+  "@playHumanTimeMinutes": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "playHumanDescFast": "Super fast! Think quickly ⚡",
+  "playHumanDescMedium": "Fast and fun 🏃",
+  "playHumanDescSlow": "Take your time and think carefully 🧘",
+  "playHumanDescDeep": "Plenty of time to think deeply 🌳",
+  "playHumanRated": "Rated",
+  "playHumanUnrated": "Unrated",
+  "playHumanRatedNote": "Rated games affect your Lichess rapid rating.",
+  "playHumanUnratedNote": "You'll be matched with another player around your skill level. Unrated games only.",
+  "playHumanSeeking": "Finding an opponent...",
+  "playHumanSeekingNote": "This usually takes less than 30 seconds",
+  "playHumanCancel": "Cancel",
+  "playHumanErrorLogin": "You need to log in to play against real people.",
+  "playHumanErrorConnect": "Could not connect. Check your internet and try again.",
+  "playHumanTryAgain": "Try Again",
+
+  "puzzleDailyTitle": "✨ Daily Puzzle",
+  "puzzleTitle": "🧩 Puzzle #{id}",
+  "@puzzleTitle": {
+    "placeholders": {
+      "id": { "type": "String" }
+    }
+  },
+  "puzzleWhiteToMove": "White to move — find the best move!",
+  "puzzleBlackToMove": "Black to move — find the best move!",
+  "puzzleCorrect": "Best move! 🎉",
+  "puzzleWrong": "That's not it — try again! 💪",
+  "puzzleSolved": "Puzzle complete! 🏆",
+  "puzzleHint": "Get a hint",
+  "puzzleViewSolution": "View solution",
+  "puzzleContinueTraining": "Continue Training",
+  "puzzleViewingSolution": "Showing solution...",
+  "puzzleButtonDaily": "Daily",
+  "puzzleButtonNext": "Next Puzzle",
+  "puzzleButtonLoad": "Load Daily Puzzle",
+  "puzzleButtonRandom": "Random Puzzle",
+  "puzzleReadyText": "Ready to solve puzzles?",
+  "puzzleErrorNoInternet": "No internet connection.\nCheck your Wi-Fi and try again!",
+  "puzzleErrorGeneric": "Something went wrong.\nPlease try again.",
+  "puzzleTryAgain": "Try Again",
+
+  "settingsTitle": "Settings",
+  "settingsSectionApp": "App",
+  "settingsAbout": "About ChessPals",
+  "settingsAboutVersion": "Version 1.0.0",
+  "settingsAboutText": "A kid-friendly chess app. Bot play uses the open-source Stockfish engine. Online puzzles and matchmaking use the Lichess API.",
+  "settingsPrivacyPolicy": "Privacy Policy",
+  "settingsLanguage": "Language",
+  "settingsLanguageSub": "English / Magyar",
+  "settingsLanguageEnglish": "English",
+  "settingsLanguageHungarian": "Magyar",
+
+  "settingsSectionProfile": "Profile",
+  "settingsAvatar": "Choose Avatar",
+  "settingsAvatarSub": "Tap to pick your character",
+
+  "gameOverGoHome": "Main Menu",
+  "gameOverAnalyze": "Review Game",
+  "analysisTitle": "Game Review",
+  "analysisMoveCounter": "Move {current} of {total}",
+  "@analysisMoveCounter": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  }
+}

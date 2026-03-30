@@ -1,0 +1,135 @@
+== BEE ==
+
+1. bee_neutral.png
+Cute cartoon bee face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, relaxed eyebrows, warm and welcoming expression.
+
+2. bee_happy.png
+Cute cartoon bee face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, celebrating expression, radiating joy.
+
+3. bee_sad.png
+Cute cartoon bee face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down cheek, disappointed expression.
+
+4. bee_scared.png
+Cute cartoon bee face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, pale face, trembling, startled expression.
+
+5. bee_furious.png
+Cute cartoon bee face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, steam coming from ears, furious expression.
+
+== BUTTERFLY ==
+
+6. butterfly_neutral.png
+Cute cartoon butterfly face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, relaxed eyebrows, warm and welcoming expression, delicate antennae visible.
+
+7. butterfly_happy.png
+Cute cartoon butterfly face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, celebrating expression, delicate antennae perked up.
+
+8. butterfly_sad.png
+Cute cartoon butterfly face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down cheek, disappointed expression, antennae drooping.
+
+9. butterfly_scared.png
+Cute cartoon butterfly face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, pale face, trembling, startled expression.
+
+10. butterfly_furious.png
+Cute cartoon butterfly face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, steam coming from ears, furious expression.
+
+== HUMMINGBIRD ==
+
+11. hummingbird_neutral.png
+Cute cartoon hummingbird face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, iridescent green plumage, long thin beak, relaxed and welcoming expression.
+
+12. hummingbird_happy.png
+Cute cartoon hummingbird face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, iridescent green plumage, long thin beak, celebrating expression.
+
+13. hummingbird_sad.png
+Cute cartoon hummingbird face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear, iridescent green plumage, long thin beak, disappointed expression.
+
+14. hummingbird_scared.png
+Cute cartoon hummingbird face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, iridescent green plumage, long thin beak, trembling, startled expression.
+
+15. hummingbird_furious.png
+Cute cartoon hummingbird face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, iridescent green plumage, long thin beak, furious expression.
+
+== RABBIT ==
+
+16. rabbit_neutral.png
+Cute cartoon rabbit face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, long floppy ears, pink nose, relaxed and welcoming expression.
+
+17. rabbit_happy.png
+Cute cartoon rabbit face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, long ears perked up, celebrating expression.
+
+18. rabbit_sad.png
+Cute cartoon rabbit face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down cheek, long ears drooping down, disappointed expression.
+
+19. rabbit_scared.png
+Cute cartoon rabbit face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, ears standing straight up in alarm, pale face, trembling, startled expression.
+
+20. rabbit_furious.png
+Cute cartoon rabbit face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, ears pulled back in anger, furious expression.
+
+== KANGAROO ==
+
+21. kangaroo_neutral.png
+Cute cartoon kangaroo face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, round ears, brown fur, relaxed and welcoming expression.
+
+22. kangaroo_happy.png
+Cute cartoon kangaroo face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, ears perked up, celebrating expression.
+
+23. kangaroo_sad.png
+Cute cartoon kangaroo face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down cheek, ears drooping, disappointed expression.
+
+24. kangaroo_scared.png
+Cute cartoon kangaroo face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, ears standing up in alarm, trembling, startled expression.
+
+25. kangaroo_furious.png
+Cute cartoon kangaroo face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, ears pulled back, furious expression.
+
+== DEER ==
+
+26. deer_neutral.png
+Cute cartoon deer face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, small antlers, spotted brown fur, gentle and welcoming expression.
+
+27. deer_happy.png
+Cute cartoon deer face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, small antlers, celebrating expression.
+
+28. deer_sad.png
+Cute cartoon deer face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down cheek, small antlers, disappointed expression.
+
+29. deer_scared.png
+Cute cartoon deer face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils like a deer in headlights, open mouth gasping, ears flattened, trembling, startled expression.
+
+30. deer_furious.png
+Cute cartoon deer face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, antlers looking sharp and aggressive, furious expression.
+
+== GIRAFFE ==
+
+31. giraffe_neutral.png
+Cute cartoon giraffe face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, small ossicones on top, spotted yellow-brown pattern, long eyelashes, welcoming expression.
+
+32. giraffe_happy.png
+Cute cartoon giraffe face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, small ossicones, spotted pattern, celebrating expression.
+
+33. giraffe_sad.png
+Cute cartoon giraffe face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down long face, small ossicones, disappointed expression.
+
+34. giraffe_scared.png
+Cute cartoon giraffe face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, ears flattened, trembling, startled expression.
+
+35. giraffe_furious.png
+Cute cartoon giraffe face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, gritted teeth, bright red cheeks, nostrils flaring, furious expression.
+
+== TIGER ==
+
+36. tiger_neutral.png
+Cute cartoon tiger face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Friendly calm smile, orange fur with black stripes, round ears, relaxed and welcoming expression.
+
+37. tiger_happy.png
+Cute cartoon tiger face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Huge joyful grin, squinted happy eyes, rosy cheeks, orange fur with black stripes, ears perked up, celebrating expression.
+
+38. tiger_sad.png
+Cute cartoon tiger face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Downturned mouth frown, droopy sad eyes, single tear rolling down cheek, orange fur with black stripes, disappointed expression.
+
+39. tiger_scared.png
+Cute cartoon tiger face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Wide shocked eyes with tiny pupils, open mouth gasping, orange fur with black stripes, ears flattened back, trembling, startled expression.
+
+40. tiger_furious.png
+Cute cartoon tiger face close-up, round circular composition, flat color style, kid-friendly, transparent background, big expressive eyes, consistent kawaii style. Angry furrowed eyebrows, baring fangs, bright red cheeks, orange fur with black stripes, ears pulled back, furious expression.

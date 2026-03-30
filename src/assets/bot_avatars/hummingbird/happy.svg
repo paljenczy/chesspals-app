@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <path d="M54 26 Q50 10 56 14" stroke="#00ACC1" stroke-width="2" fill="#80DEEA" />
+  <path d="M64 24 Q62 6 68 12" stroke="#00ACC1" stroke-width="2" fill="#80DEEA" />
+  <path d="M74 26 Q78 10 72 14" stroke="#00ACC1" stroke-width="2" fill="#80DEEA" />
+  <rect x="20" y="24" width="88" height="88" rx="28" ry="28" fill="#80DEEA" />
+  <polygon points="108,72 124,76 108,80" fill="#00ACC1" />
+  <circle cx="36" cy="78" r="9" fill="#E0F7FA" opacity="0.6" />
+  <circle cx="92" cy="78" r="9" fill="#E0F7FA" opacity="0.6" />
+  <path d="M38 64 Q46 56 54 64" stroke="#2C2C2C" stroke-width="3.5" fill="none" stroke-linecap="round" />
+  <path d="M74 64 Q82 56 90 64" stroke="#2C2C2C" stroke-width="3.5" fill="none" stroke-linecap="round" />
+  <ellipse cx="64" cy="74" rx="4" ry="3" fill="#00ACC1" />
+  <path d="M50 82 Q64 96 78 82" stroke="#2C2C2C" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  <path d="M52 83 Q64 94 76 83" fill="#E53935" opacity="0.3" />
+</svg>
