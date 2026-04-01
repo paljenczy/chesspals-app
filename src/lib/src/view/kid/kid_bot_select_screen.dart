@@ -91,8 +91,8 @@ class _BotCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               character.hasPngEmotions
-                  ? Image.asset(character.emotionAsset(null), width: 44, height: 44, fit: BoxFit.contain)
-                  : SvgPicture.asset(character.emotionAsset(null), width: 44, height: 44),
+                  ? Image.asset(character.emotionAsset(null), width: 72, height: 72, fit: BoxFit.contain)
+                  : SvgPicture.asset(character.emotionAsset(null), width: 72, height: 72),
               const SizedBox(height: 6),
               Text(
                 localizedBotName(l, character),

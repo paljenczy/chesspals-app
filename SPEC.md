@@ -109,14 +109,14 @@ src/
 ├── l10n.yaml
 ├── assets/
 │   ├── avatars/                  # kid avatar SVGs (DiceBear Adventurer)
-│   ├── bot_avatars/              # bot animal face SVGs (code-generated)
-│   │   ├── bee.svg … tiger.svg   # 8 top-level neutral avatars
+│   ├── bot_avatars/              # bot animal AI-generated PNGs (circular, 512×512)
+│   │   ├── bee.svg … tiger.svg   # 8 top-level neutral SVGs (legacy)
 │   │   ├── bee/                  # per-animal emotion dirs
-│   │   │   ├── neutral.svg
-│   │   │   ├── happy.svg
-│   │   │   ├── sad.svg
-│   │   │   ├── scared.svg
-│   │   │   └── furious.svg
+│   │   │   ├── neutral.png
+│   │   │   ├── happy.png
+│   │   │   ├── sad.png
+│   │   │   ├── scared.png
+│   │   │   └── furious.png
 │   │   └── … (butterfly/ hummingbird/ rabbit/ kangaroo/ deer/ giraffe/ tiger/)
 │   └── sounds/                   # reaction WAV files
 │       ├── reaction_happy.wav
@@ -351,10 +351,11 @@ Fields per character: `id`, `name` (English), `emoji`, `svgAsset`, `imageDir`, `
 | giraffe | `0xFFFFCC80` | Gold |
 | tiger | `0xFFEF6C00` | Orange |
 
-**Emotion images**: Each bot has 5 SVG emotion variants in `assets/bot_avatars/{id}/`:
-`neutral.svg`, `happy.svg`, `sad.svg`, `scared.svg`, `furious.svg`.
+**Emotion images**: Each bot has 5 AI-generated PNG emotion variants in `assets/bot_avatars/{id}/`:
+`neutral.png`, `happy.png`, `sad.png`, `scared.png`, `furious.png`.
+Images are 512×512 circular PNGs with transparent corners, processed from raw AI art via `tools/process_avatars.py` (center-crop, resize, circular mask).
 
-**`emotionAsset(BotReaction? reaction)`**: returns the asset path for a given emotion. Uses PNG if `hasPngEmotions` is true, SVG otherwise. Currently all bots use SVG (`hasPngEmotions => false`).
+**`emotionAsset(BotReaction? reaction)`**: returns the asset path for a given emotion. Uses PNG (`hasPngEmotions => true` for all bots).
 
 **Rating display**: Round to nearest 10 (`(rating / 10).round() * 10`).
 
@@ -474,14 +475,15 @@ Priority order (first match wins):
 - Nothing notable → `null`
 
 **`BotCharacterAvatar`** widget:
-- Displays the current emotion SVG for the bot character at 48×48
+- Displays the current emotion PNG for the bot character, filling the circular container edge-to-edge (`ClipOval` + `BoxFit.cover`)
 - Animated transitions when `trigger(BotReaction)` is called
 - Animation effects per reaction:
-  - `happy` (800ms): elastic bounce + green tint
-  - `sad` (1000ms): droop/shrink + blue tint
-  - `scared` (600ms): rapid shake + yellow flash
-  - `furious` (700ms): aggressive shake + red tint
-- `isThinking` flag shows a subtle pulse animation
+  - `happy` (2500ms): elastic bounce + green tint
+  - `sad` (3000ms): droop/shrink + blue tint
+  - `scared` (2000ms): rapid shake + yellow flash
+  - `furious` (2500ms): aggressive shake + red tint
+- After the animation completes, the reaction face is held for an additional 4 seconds before resetting to neutral
+- `isThinking` flag shows orange border
 
 Used in both `OfflineGameScreen` and `OnlineGameScreen` (when `characterIndex` is set).
 
@@ -852,7 +854,7 @@ abstract class ChessPalsColors {
 9. **Locale rebuild** — `ChessPalsApp` watches `localeProvider`; changing locale rebuilds the entire widget tree, updating all strings instantly without navigation.
 10. **AppBar title overflow** — when showing "Bot thinking..." in AppBar, wrap the text in `Flexible` with `TextOverflow.ellipsis` to prevent overflow on smaller screens or with long localized names.
 11. **Bot move delay** — offline bot waits 3 seconds before responding, giving kids time to see their move on the board. The "thinking" spinner and status banner display during this delay.
-12. **SVG animal assets** — all bot avatars are code-generated SVGs (`tools/generate_animal_svgs.py`). The system supports PNG emotions via `hasPngEmotions` flag but currently all bots use SVG. To regenerate: `python3 tools/generate_animal_svgs.py`.
+12. **PNG animal assets** — all bot emotion avatars are AI-generated PNGs, post-processed via `tools/process_avatars.py` (center-crop to square, resize to 512×512, circular mask with transparent corners). Legacy SVGs still exist as top-level neutral avatars (`bee.svg` etc.) and in emotion subdirs but are no longer used. To re-process: `python3 tools/process_avatars.py ~/Downloads/chesspals_avatars`.
 13. **Resign confirmation** — both offline and online games show a confirmation dialog before resigning. Offline reuses the online localization keys (`onlineResignTitle`, `onlineResignContent`, etc.).
 14. **Board API time control restriction** — `POST /api/board/seek` enforces `Speed >= Rapid` (≥480s estimated) for third-party apps. The `web:mobile` OAuth scope that bypasses this is reserved for the official Lichess app. Blitz (e.g., 5+3 = 420s) returns HTTP 400 "Invalid time control". The Challenge API (`POST /api/challenge/{username}`) is more permissive (allows Blitz+). All three time controls in the app (10+0, 10+5, 15+10) are Rapid and work with the Board API.
 15. **Chat excluded** — chat functionality is intentionally excluded from the app entirely. No chat UI, no approved phrases, no `sendChatMessage()` method.

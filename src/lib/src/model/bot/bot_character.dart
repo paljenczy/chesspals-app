@@ -154,7 +154,7 @@ enum BotCharacter {
 
   /// Whether this character has custom PNG emotion images.
   /// Set to true once AI-generated PNGs are added for an animal.
-  bool get hasPngEmotions => false;
+  bool get hasPngEmotions => true;
 }
 
 /// Challenges a real Lichess bot account.

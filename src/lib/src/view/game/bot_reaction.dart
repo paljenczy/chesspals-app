@@ -53,7 +53,7 @@ class BotCharacterAvatar extends StatefulWidget {
     super.key,
     required this.character,
     this.isThinking = false,
-    this.size = 48,
+    this.size = 64,
   });
 
   final BotCharacter character;
@@ -69,13 +69,16 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
   late final AnimationController _ctrl;
   BotReaction? _activeReaction;
 
-  // Durations per reaction
+  // Durations per reaction (animation phase)
   static const _durations = {
-    BotReaction.happy:   Duration(milliseconds: 800),
-    BotReaction.sad:     Duration(milliseconds: 1000),
-    BotReaction.scared:  Duration(milliseconds: 600),
-    BotReaction.furious: Duration(milliseconds: 700),
+    BotReaction.happy:   Duration(milliseconds: 2500),
+    BotReaction.sad:     Duration(milliseconds: 3000),
+    BotReaction.scared:  Duration(milliseconds: 2000),
+    BotReaction.furious: Duration(milliseconds: 2500),
   };
+
+  // How long to hold the reaction face after the animation finishes
+  static const _holdDuration = Duration(seconds: 4);
 
   @override
   void initState() {
@@ -83,7 +86,10 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
     _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 550));
     _ctrl.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        if (mounted) setState(() => _activeReaction = null);
+        // Hold the reaction face for a while before resetting to neutral
+        Future.delayed(_holdDuration, () {
+          if (mounted) setState(() => _activeReaction = null);
+        });
       }
     });
   }
@@ -228,11 +234,11 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
           width: 2,
         ),
       ),
-      child: Center(
+      child: ClipOval(
         child: _emotionImage(
           widget.character,
           _activeReaction,
-          size * 0.65,
+          size,
         ),
       ),
     );
@@ -242,7 +248,7 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
   static Widget _emotionImage(BotCharacter character, BotReaction? reaction, double size) {
     final asset = character.emotionAsset(reaction);
     if (character.hasPngEmotions) {
-      return Image.asset(asset, width: size, height: size, fit: BoxFit.contain);
+      return Image.asset(asset, width: size, height: size, fit: BoxFit.cover);
     }
     return SvgPicture.asset(asset, width: size, height: size);
   }
@@ -257,7 +263,7 @@ class BotEmojiAvatar extends StatelessWidget {
     super.key,
     required this.character,
     this.isThinking = false,
-    this.size = 48,
+    this.size = 64,
   });
 
   final BotCharacter character;
@@ -277,7 +283,7 @@ class BotEmojiAvatar extends StatelessWidget {
           width: 2,
         ),
       ),
-      child: Center(
+      child: ClipOval(
         child: _buildImage(),
       ),
     );
@@ -285,10 +291,9 @@ class BotEmojiAvatar extends StatelessWidget {
 
   Widget _buildImage() {
     final asset = character.emotionAsset(null);
-    final imgSize = size * 0.65;
     if (character.hasPngEmotions) {
-      return Image.asset(asset, width: imgSize, height: imgSize, fit: BoxFit.contain);
+      return Image.asset(asset, width: size, height: size, fit: BoxFit.cover);
     }
-    return SvgPicture.asset(asset, width: imgSize, height: imgSize);
+    return SvgPicture.asset(asset, width: size * 0.65, height: size * 0.65);
   }
 }

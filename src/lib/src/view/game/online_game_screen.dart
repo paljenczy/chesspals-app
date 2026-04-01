@@ -539,8 +539,8 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           character.hasPngEmotions
-              ? Image.asset(character.emotionAsset(null), width: 24, height: 24, fit: BoxFit.contain)
-              : SvgPicture.asset(character.emotionAsset(null), width: 24, height: 24),
+              ? Image.asset(character.emotionAsset(null), width: 36, height: 36, fit: BoxFit.contain)
+              : SvgPicture.asset(character.emotionAsset(null), width: 36, height: 36),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
@@ -576,8 +576,8 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
             )
           else
             Container(
-              width: 48,
-              height: 48,
+              width: 64,
+              height: 64,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 shape: BoxShape.circle,
