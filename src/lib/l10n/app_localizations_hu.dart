@@ -146,28 +146,28 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
-  String get offlineStatusYourTurn => 'Te jössz ♟';
+  String get botGameStatusYourTurn => 'Te jössz ♟';
 
   @override
-  String get offlineStatusBotThinking => 'A bot gondolkodik...';
+  String get botGameStatusBotThinking => 'A bot gondolkodik...';
 
   @override
-  String get offlineStatusYouWon => 'Nyertél! 🎉';
+  String get botGameStatusYouWon => 'Nyertél! 🎉';
 
   @override
-  String get offlineStatusBotWins => 'A bot nyert! Próbáld újra 💪';
+  String get botGameStatusBotWins => 'A bot nyert! Próbáld újra 💪';
 
   @override
-  String get offlineStatusDraw => 'Döntetlen! 🤝';
+  String get botGameStatusDraw => 'Döntetlen! 🤝';
 
   @override
-  String get offlineButtonResign => 'Feladás';
+  String get botGameButtonResign => 'Feladás';
 
   @override
-  String get offlineButtonNewGame => 'Új játék';
+  String get botGameButtonNewGame => 'Új játék';
 
   @override
-  String get offlineTooltipNewGame => 'Új játék';
+  String get botGameTooltipNewGame => 'Új játék';
 
   @override
   String get onlineConnecting => 'Csatlakozás...';

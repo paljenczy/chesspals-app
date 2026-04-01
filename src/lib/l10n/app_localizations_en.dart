@@ -146,28 +146,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get offlineStatusYourTurn => 'Your turn ♟';
+  String get botGameStatusYourTurn => 'Your turn ♟';
 
   @override
-  String get offlineStatusBotThinking => 'Bot is thinking...';
+  String get botGameStatusBotThinking => 'Bot is thinking...';
 
   @override
-  String get offlineStatusYouWon => 'You won! 🎉';
+  String get botGameStatusYouWon => 'You won! 🎉';
 
   @override
-  String get offlineStatusBotWins => 'Bot wins! Try again 💪';
+  String get botGameStatusBotWins => 'Bot wins! Try again 💪';
 
   @override
-  String get offlineStatusDraw => 'It\'s a draw! 🤝';
+  String get botGameStatusDraw => 'It\'s a draw! 🤝';
 
   @override
-  String get offlineButtonResign => 'Resign';
+  String get botGameButtonResign => 'Resign';
 
   @override
-  String get offlineButtonNewGame => 'New Game';
+  String get botGameButtonNewGame => 'New Game';
 
   @override
-  String get offlineTooltipNewGame => 'New game';
+  String get botGameTooltipNewGame => 'New game';
 
   @override
   String get onlineConnecting => 'Connecting...';

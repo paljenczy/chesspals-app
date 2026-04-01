@@ -63,6 +63,7 @@ flutter:
   generate: true
   assets:
     - assets/avatars/
+    - assets/kid_avatars/
     - assets/bot_avatars/
     - assets/bot_avatars/bee/
     - assets/bot_avatars/butterfly/

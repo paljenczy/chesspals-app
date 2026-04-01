@@ -10,7 +10,7 @@ import 'styles/theme.dart';
 import 'view/auth/login_screen.dart';
 import 'view/home/home_screen.dart';
 import 'view/kid/kid_bot_select_screen.dart';
-import 'view/kid/offline_game_screen.dart';
+import 'view/kid/bot_game_screen.dart';
 import 'view/puzzle/puzzle_screen.dart';
 import 'view/play/play_human_screen.dart';
 import 'view/game/online_game_screen.dart';
@@ -49,17 +49,6 @@ GoRouter _buildRouter(WidgetRef ref) {
             pageBuilder: (context, state) => const NoTransitionPage(
               child: KidBotSelectScreen(),
             ),
-            routes: [
-              GoRoute(
-                path: 'game/:level',
-                builder: (context, state) => OfflineGameScreen(
-                  level: int.parse(state.pathParameters['level']!),
-                  characterIndex: int.parse(
-                    state.uri.queryParameters['char'] ?? '0',
-                  ),
-                ),
-              ),
-            ],
           ),
           GoRoute(
             path: '/puzzles',
@@ -74,6 +63,15 @@ GoRouter _buildRouter(WidgetRef ref) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/bot/game/:level',
+        builder: (context, state) => BotGameScreen(
+          level: int.parse(state.pathParameters['level']!),
+          characterIndex: int.parse(
+            state.uri.queryParameters['char'] ?? '0',
+          ),
+        ),
       ),
       GoRoute(
         path: '/game/:id',
@@ -103,21 +101,38 @@ GoRouter _buildRouter(WidgetRef ref) {
   );
 }
 
-class ChessPalsApp extends ConsumerWidget {
+class ChessPalsApp extends ConsumerStatefulWidget {
   const ChessPalsApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Watch account so router rebuilds when login state changes
-    ref.watch(accountProvider);
-    final router = _buildRouter(ref);
+  ConsumerState<ChessPalsApp> createState() => _ChessPalsAppState();
+}
 
+class _ChessPalsAppState extends ConsumerState<ChessPalsApp> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = _buildRouter(ref);
+  }
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Watch account so redirect re-evaluates on login/logout
+    ref.watch(accountProvider);
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: 'ChessPals',
       theme: ChessPalsTheme.light,
-      routerConfig: router,
+      routerConfig: _router,
       debugShowCheckedModeBanner: false,
       locale: locale,
       localizationsDelegates: const [

@@ -55,14 +55,14 @@
     }
   },
 
-  "offlineStatusYourTurn": "Te jössz ♟",
-  "offlineStatusBotThinking": "A bot gondolkodik...",
-  "offlineStatusYouWon": "Nyertél! 🎉",
-  "offlineStatusBotWins": "A bot nyert! Próbáld újra 💪",
-  "offlineStatusDraw": "Döntetlen! 🤝",
-  "offlineButtonResign": "Feladás",
-  "offlineButtonNewGame": "Új játék",
-  "offlineTooltipNewGame": "Új játék",
+  "botGameStatusYourTurn": "Te jössz ♟",
+  "botGameStatusBotThinking": "A bot gondolkodik...",
+  "botGameStatusYouWon": "Nyertél! 🎉",
+  "botGameStatusBotWins": "A bot nyert! Próbáld újra 💪",
+  "botGameStatusDraw": "Döntetlen! 🤝",
+  "botGameButtonResign": "Feladás",
+  "botGameButtonNewGame": "Új játék",
+  "botGameTooltipNewGame": "Új játék",
 
   "onlineConnecting": "Csatlakozás...",
   "onlineYourTurn": "Te jössz",

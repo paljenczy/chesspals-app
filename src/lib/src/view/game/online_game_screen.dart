@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../model/auth/lichess_account.dart';
 import '../../model/bot/bot_character.dart';
-import '../../model/game/offline_game_controller.dart' show toValidMoves;
+import '../../model/game/bot_game_controller.dart' show toValidMoves;
 import '../../network/lichess_client.dart';
 import '../../service/reaction_audio.dart';
 import '../../utils/bot_l10n.dart';

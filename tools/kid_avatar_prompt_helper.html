@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ChessPals Kid Avatar Prompt Helper</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; padding: 24px; max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 20px; margin-bottom: 16px; color: #333; }
+  .progress { font-size: 14px; color: #666; margin-bottom: 8px; }
+  .progress-bar { height: 6px; background: #ddd; border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: #4CAF50; transition: width 0.3s; }
+  .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
+  .avatar-name { font-size: 18px; font-weight: 700; color: #333; }
+  .description { font-size: 14px; color: #888; margin-top: 2px; margin-bottom: 12px; }
+  .filename { font-size: 13px; color: #4CAF50; font-family: monospace; margin-bottom: 12px; }
+  .prompt-text { font-size: 14px; line-height: 1.6; color: #444; background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; white-space: pre-wrap; word-wrap: break-word; }
+  .buttons { display: flex; gap: 10px; margin-top: 16px; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .btn-copy { background: #2196F3; color: white; }
+  .btn-copy:hover { background: #1976D2; }
+  .btn-copy.copied { background: #4CAF50; }
+  .btn-prev { background: #eee; color: #333; }
+  .btn-prev:hover { background: #ddd; }
+  .btn-next { background: #FF9800; color: white; }
+  .btn-next:hover { background: #F57C00; }
+  .btn-skip { background: #eee; color: #888; font-size: 12px; }
+  .btn-skip:hover { background: #ddd; }
+  .jump-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+  .jump-btn { padding: 8px 4px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; cursor: pointer; background: white; text-align: center; line-height: 1.3; }
+  .jump-btn:hover { background: #e3f2fd; }
+  .jump-btn.current { background: #2196F3; color: white; border-color: #2196F3; }
+  .jump-btn.completed { background: #E8F5E9; border-color: #4CAF50; }
+</style>
+</head>
+<body>
+
+<h1>ChessPals Kid Avatar Prompt Helper</h1>
+<div class="progress" id="progressText">1 / 8</div>
+<div class="progress-bar"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+
+<div class="card" id="promptCard">
+  <div class="avatar-name" id="avatarName"></div>
+  <div class="description" id="descName"></div>
+  <div class="filename" id="fileName"></div>
+  <div class="prompt-text" id="promptText"></div>
+  <div class="buttons">
+    <button class="btn btn-copy" id="copyBtn" onclick="copyPrompt()">Copy Prompt</button>
+    <button class="btn btn-prev" onclick="prev()">Prev</button>
+    <button class="btn btn-next" onclick="next()">Next</button>
+    <button class="btn btn-skip" onclick="markDone()">Mark Done</button>
+  </div>
+</div>
+
+<details style="margin-top: 12px;">
+  <summary style="cursor:pointer;font-size:14px;color:#666;">Jump to avatar</summary>
+  <div class="jump-grid" id="jumpGrid"></div>
+</details>
+
+<div class="card" style="margin-top:16px">
+  <strong>Workflow</strong>
+  <ol style="margin-top:8px;padding-left:20px;font-size:13px;color:#555;line-height:1.8;">
+    <li>Click <b>Copy Prompt</b></li>
+    <li>Paste into Gemini / Copilot</li>
+    <li>Generate the image</li>
+    <li>Download / save as the filename shown above (e.g. <code>kid_avatar_1.png</code>)</li>
+    <li>Click <b>Mark Done</b>, then <b>Next</b></li>
+    <li>When all 8 are done, drop them in <code>~/Downloads/chesspals_kid_avatars/</code> and run the processing script</li>
+  </ol>
+</div>
+
+<script>
+const BASE = "A soft watercolor illustration of a cute young {GENDER} character's face, designed as a circular avatar for a children's chess app. Extreme close-up: the face fills the entire frame, edge-to-edge. Render the artwork inside a perfect circle with a thin solid dark brown outline around the circle edge and a plain white background outside the circle.\nRound friendly face, big expressive eyes, gentle brushstrokes, muted pastel palette, warm inviting children's storybook style. {FEATURES}, happy cheerful expression: bright smiling eyes, small gentle smile, rosy cheeks. Clean minimal design. No text, no outer glow, no vignette, and no additional background\u2014only the circular child's face with a thin dark brown border and white outside area.";
+
+const avatars = [
+  {
+    id: 1,
+    label: 'Boy \u2014 Light skin, blonde',
+    gender: 'boy',
+    features: 'light skin, short tousled blonde hair, small rounded ears, blue eyes',
+  },
+  {
+    id: 2,
+    label: 'Boy \u2014 Dark skin, curly black',
+    gender: 'boy',
+    features: 'dark brown skin, short curly black hair, small rounded ears, dark brown eyes',
+  },
+  {
+    id: 3,
+    label: 'Boy \u2014 Warm light, straight black',
+    gender: 'boy',
+    features: 'warm light skin, straight black hair with a neat side part, small rounded ears, dark brown eyes',
+  },
+  {
+    id: 4,
+    label: 'Boy \u2014 Tan skin, wavy brown',
+    gender: 'boy',
+    features: 'warm tan skin, short wavy dark brown hair, small rounded ears, brown eyes',
+  },
+  {
+    id: 5,
+    label: 'Girl \u2014 Light skin, blonde',
+    gender: 'girl',
+    features: 'light skin, long blonde hair with a small hair clip, long eyelashes, blue eyes',
+  },
+  {
+    id: 6,
+    label: 'Girl \u2014 Dark skin, curly black',
+    gender: 'girl',
+    features: 'dark brown skin, curly black hair styled in two puffs, long eyelashes, dark brown eyes',
+  },
+  {
+    id: 7,
+    label: 'Girl \u2014 Warm light, straight black',
+    gender: 'girl',
+    features: 'warm light skin, long straight black hair with a headband, long eyelashes, dark brown eyes',
+  },
+  {
+    id: 8,
+    label: 'Girl \u2014 Tan skin, wavy brown',
+    gender: 'girl',
+    features: 'warm tan skin, long wavy dark brown hair in a ponytail, long eyelashes, brown eyes',
+  },
+];
+
+const prompts = avatars.map(a => {
+  const prompt = BASE
+    .replace('{GENDER}', a.gender)
+    .replace('{FEATURES}', a.features);
+  return {
+    label: a.label,
+    filename: `kid_avatar_${a.id}.png`,
+    prompt,
+  };
+});
+
+let current = 0;
+const completed = new Set(JSON.parse(localStorage.getItem('chesspals_kid_done') || '[]'));
+
+function saveDone() {
+  localStorage.setItem('chesspals_kid_done', JSON.stringify([...completed]));
+}
+
+function render() {
+  const p = prompts[current];
+  document.getElementById('avatarName').textContent = `Avatar #${current + 1}`;
+  document.getElementById('descName').textContent = p.label;
+  document.getElementById('fileName').textContent = `Save as: ${p.filename}`;
+  document.getElementById('promptText').textContent = p.prompt;
+  document.getElementById('progressText').textContent = `${current + 1} / 8  (${completed.size} done)`;
+  document.getElementById('progressFill').style.width = `${(completed.size / 8) * 100}%`;
+  document.getElementById('copyBtn').textContent = 'Copy Prompt';
+  document.getElementById('copyBtn').classList.remove('copied');
+
+  const grid = document.getElementById('jumpGrid');
+  grid.innerHTML = '';
+  prompts.forEach((pr, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'jump-btn' + (i === current ? ' current' : '') + (completed.has(i) ? ' completed' : '');
+    btn.textContent = pr.label;
+    btn.onclick = () => { current = i; render(); };
+    grid.appendChild(btn);
+  });
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(prompts[current].prompt);
+  const btn = document.getElementById('copyBtn');
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+}
+
+function next() {
+  if (current < prompts.length - 1) { current++; render(); }
+}
+
+function prev() {
+  if (current > 0) { current--; render(); }
+}
+
+function markDone() {
+  completed.add(current);
+  saveDone();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

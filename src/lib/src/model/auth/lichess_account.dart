@@ -2,8 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../../network/lichess_client.dart';
 
 /// Lichess user account data fetched from /api/account.
@@ -126,9 +124,7 @@ final accountProvider =
 
 // ─── Kid Avatar ───────────────────────────────────────────────────────────────
 
-/// A kid avatar backed by a bundled DiceBear Adventurer SVG asset.
-/// Artwork: "Adventurer" by Lisa Wischofsky, CC BY 4.0
-/// https://www.figma.com/community/file/1184595184137881796
+/// A kid avatar backed by a watercolor PNG asset.
 class KidAvatar {
   const KidAvatar({
     required this.assetPath,
@@ -136,25 +132,25 @@ class KidAvatar {
     required this.bgColor,
   });
 
-  final String assetPath; // e.g. 'assets/avatars/avatar_boy1.svg'
+  final String assetPath; // e.g. 'assets/kid_avatars/kid_avatar_1.png'
   final String label;
   final Color bgColor;
 
   static const all = [
     // Boys
-    KidAvatar(assetPath: 'assets/avatars/avatar_boy1.svg',  label: 'Boy',             bgColor: Color(0xFFB6E3F4)),
-    KidAvatar(assetPath: 'assets/avatars/avatar_boy2.svg',  label: 'Boy – medium',    bgColor: Color(0xFFFFDFBF)),
-    KidAvatar(assetPath: 'assets/avatars/avatar_boy3.svg',  label: 'Boy – dark',      bgColor: Color(0xFFC0AEDE)),
-    KidAvatar(assetPath: 'assets/avatars/avatar_boy4.svg',  label: 'Boy – glasses',   bgColor: Color(0xFFD1D4F9)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_1.png', label: 'Boy 1', bgColor: Color(0xFFB6E3F4)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_2.png', label: 'Boy 2', bgColor: Color(0xFFFFDFBF)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_3.png', label: 'Boy 3', bgColor: Color(0xFFC0AEDE)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_4.png', label: 'Boy 4', bgColor: Color(0xFFD1D4F9)),
     // Girls
-    KidAvatar(assetPath: 'assets/avatars/avatar_girl1.svg', label: 'Girl',            bgColor: Color(0xFFFFD5DC)),
-    KidAvatar(assetPath: 'assets/avatars/avatar_girl2.svg', label: 'Girl – medium',   bgColor: Color(0xFFFFDFBF)),
-    KidAvatar(assetPath: 'assets/avatars/avatar_girl3.svg', label: 'Girl – dark',     bgColor: Color(0xFFFFD5DC)),
-    KidAvatar(assetPath: 'assets/avatars/avatar_girl4.svg', label: 'Girl – glasses',  bgColor: Color(0xFFC0AEDE)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_5.png', label: 'Girl 1', bgColor: Color(0xFFFFD5DC)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_6.png', label: 'Girl 2', bgColor: Color(0xFFFFDFBF)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_7.png', label: 'Girl 3', bgColor: Color(0xFFFFD5DC)),
+    KidAvatar(assetPath: 'assets/kid_avatars/kid_avatar_8.png', label: 'Girl 4', bgColor: Color(0xFFC0AEDE)),
   ];
 }
 
-/// Renders a kid avatar as a circular widget using the bundled SVG.
+/// Renders a kid avatar as a circular widget using a watercolor PNG asset.
 class KidAvatarWidget extends StatelessWidget {
   const KidAvatarWidget({
     super.key,
@@ -193,7 +189,7 @@ class KidAvatarWidget extends StatelessWidget {
               ],
             ),
             child: ClipOval(
-              child: SvgPicture.asset(
+              child: Image.asset(
                 avatar.assetPath,
                 width: size,
                 height: size,

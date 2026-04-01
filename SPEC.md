@@ -84,7 +84,8 @@ flutter run -d <device> --dart-define=LICHESS_TOKEN=$LICHESS_TOKEN
 - `ProviderScope` wraps the app in `main.dart`
 
 ### Navigation: go_router 14.x
-- `ShellRoute` wraps the 3-tab home screens
+- `ShellRoute` wraps the 3-tab home screens (bot select, puzzles, play human)
+- Game screens (`/bot/game/:level`, `/game/:id`, `/analysis`) are top-level routes outside the ShellRoute — no HomeScreen chrome (AppBar, bottom nav) during gameplay
 - Async auth redirect: unauthenticated → `/login`
 - `PopScope(canPop: false)` in game screens for back-button interception
 
@@ -92,7 +93,7 @@ flutter run -d <device> --dart-define=LICHESS_TOKEN=$LICHESS_TOKEN
 - Theme: `MaterialApp.router` with `ThemeData(useMaterial3: true)`
 - Primary color: Forest green `#4CAF50`
 - Font: Nunito (loaded via `google_fonts` at runtime)
-- `ChessboardColorScheme.green` for offline, `.brown` for online games
+- `ChessboardColorScheme.green` for bot games, `.brown` for online games
 - `PieceSet.cburnett.assets` for piece graphics
 
 ---
@@ -108,7 +109,8 @@ src/
 ├── pubspec.yaml
 ├── l10n.yaml
 ├── assets/
-│   ├── avatars/                  # kid avatar SVGs (DiceBear Adventurer)
+│   ├── avatars/                  # kid avatar SVGs (DiceBear Adventurer, legacy)
+│   ├── kid_avatars/              # kid avatar watercolor PNGs (circular, 512×512)
 │   ├── bot_avatars/              # bot animal AI-generated PNGs (circular, 512×512)
 │   │   ├── bee.svg … tiger.svg   # 8 top-level neutral SVGs (legacy)
 │   │   ├── bee/                  # per-animal emotion dirs
@@ -139,7 +141,7 @@ src/
         │   ├── bot/
         │   │   └── bot_character.dart
         │   ├── game/
-        │   │   └── offline_game_controller.dart
+        │   │   └── bot_game_controller.dart
         │   ├── matchmaking/
         │   │   └── matchmaking_controller.dart
         │   ├── parental/
@@ -171,7 +173,7 @@ src/
             │   └── home_screen.dart
             ├── kid/
             │   ├── kid_bot_select_screen.dart
-            │   └── offline_game_screen.dart
+            │   └── bot_game_screen.dart
             ├── play/
             │   └── play_human_screen.dart
             ├── puzzle/
@@ -205,7 +207,7 @@ void main() async {
 ```
 /login               → LoginScreen
 /bot                 → KidBotSelectScreen  (ShellRoute tab 0)
-  /bot/game/:level   → OfflineGameScreen   (?char=0-7)
+/bot/game/:level     → BotGameScreen       (?char=0-7)  [top-level, no shell]
 /puzzles             → PuzzleScreen        (ShellRoute tab 1)
 /play                → PlayHumanScreen     (ShellRoute tab 2)
 /game/:id            → OnlineGameScreen    (?side=white|black|random, ?from=bot|play, ?char=0-7)
@@ -215,8 +217,9 @@ void main() async {
 
 **Auth redirect:** If `accountProvider` resolves to `null` (not logged in), redirect to `/login`. Skip redirect for `/login`, `/bot/*`, and `/analysis`.
 
-**`ChessPalsApp`** is a `ConsumerWidget` that:
-- Watches `accountProvider` (so router rebuilds on login/logout)
+**`ChessPalsApp`** is a `ConsumerStatefulWidget` that:
+- Creates the `GoRouter` once in `initState()` (prevents navigation reset on state changes like avatar cycling)
+- Watches `accountProvider` (so redirect re-evaluates on login/logout)
 - Watches `localeProvider`
 - Returns `MaterialApp.router` with `localizationsDelegates`, `supportedLocales`, `locale`
 
@@ -380,19 +383,21 @@ Run: `python3 tools/generate_animal_svgs.py`
 - Tap → call `BotService.challengeBot()` → show spinner → navigate to `/game/$gameId?side=random&from=bot&char=$index`
 - Errors: show inline (login required / could not start game)
 
-### OfflineGameScreen (lib/src/view/kid/offline_game_screen.dart)
-- Route: `/bot/game/:level?char=N`
-- Shows `AppBar` with bot SVG avatar + name
+### BotGameScreen (lib/src/view/kid/bot_game_screen.dart)
+- Route: `/bot/game/:level?char=N` (top-level route, outside ShellRoute — no HomeScreen AppBar or bottom nav)
+- Shows `AppBar` with bot PNG avatar + name
+- **Adaptive board sizing**: uses `LayoutBuilder` to compute board size from available height minus UI chrome (~200px), preventing overflow on smaller screens
 - Chessboard: `ChessboardColorScheme.green`, white always at bottom
 - Status banner: "Your turn" / "Bot is thinking..." with spinner
 - **Bot avatar reactions**: `BotCharacterAvatar` with animated emotional expressions triggered by game events (captures, checks, promotions)
 - **Reaction audio**: plays corresponding WAV sound for each reaction
+- **Player row**: below the board — `KidAvatarWidget` (tappable to cycle), username, rapid rating
 - Buttons: Resign (with confirmation dialog), New Game
 - **Resign confirmation**: shows AlertDialog ("Resign?" / "Are you sure you want to give up this game?") before resigning
 - **Game over dialog**: shows result with "Go Home" and "Analyze" options; "Analyze" navigates to `/analysis`
 
-### OfflineGameController (lib/src/model/game/offline_game_controller.dart)
-- `AsyncNotifierProvider.family<OfflineGameNotifier, OfflineGameState, int>`
+### BotGameController (lib/src/model/game/bot_game_controller.dart)
+- `AsyncNotifierProvider.family<BotGameNotifier, BotGameState, int>`
 - State: `fen`, `lastMove`, `sideToMove`, `isCheck`, `validMoves`, `status`, `pendingPromotion`, `moveHistory`
 - `onMove(move)`: plays user move, triggers bot move via `_scheduleBotMove()`
 - `onPromotion(role)`: completes pending promotion
@@ -485,7 +490,7 @@ Priority order (first match wins):
 - After the animation completes, the reaction face is held for an additional 4 seconds before resetting to neutral
 - `isThinking` flag shows orange border
 
-Used in both `OfflineGameScreen` and `OnlineGameScreen` (when `characterIndex` is set).
+Used in both `BotGameScreen` and `OnlineGameScreen` (when `characterIndex` is set).
 
 ### lib/src/service/reaction_audio.dart
 
@@ -668,9 +673,20 @@ Additional features:
 
 ## 13. Kid Avatar System
 
-8 DiceBear Adventurer-style SVG avatars (4 boys, 4 girls, various skin tones and hair styles) defined in `KidAvatar.all` as a const list in `lib/src/model/auth/lichess_account.dart`.
+8 watercolor PNG avatars (4 boys, 4 girls, diverse skin tones and hair styles) defined in `KidAvatar.all` as a const list in `lib/src/model/auth/lichess_account.dart`. Images are AI-generated in the same soft watercolor style as the bot animal avatars, processed to 512×512 circular PNGs with transparent corners.
 
-**`KidAvatarWidget`** (also defined in `lichess_account.dart`): renders SVG via `flutter_svg`, circular container with colored background.
+| # | Gender | Skin tone | Hair |
+|---|--------|-----------|------|
+| 1 | Boy | Light | Blonde, tousled |
+| 2 | Boy | Dark brown | Black, curly |
+| 3 | Boy | Warm light | Black, straight side part |
+| 4 | Boy | Warm tan | Dark brown, wavy |
+| 5 | Girl | Light | Blonde, with clip |
+| 6 | Girl | Dark brown | Black, two puffs |
+| 7 | Girl | Warm light | Black, straight with headband |
+| 8 | Girl | Warm tan | Dark brown, wavy ponytail |
+
+**`KidAvatarWidget`** (also defined in `lichess_account.dart`): renders PNG via `Image.asset`, circular container with colored background.
 - `avatarIndex` parameter
 - `size` parameter (default 56)
 - `onTap` callback for cycling
@@ -678,9 +694,11 @@ Additional features:
 
 **Avatar assignment**: random on first login, persisted to `FlutterSecureStorage` under `kid_avatar_index_{userId}`.
 
-**Cycling**: `AccountNotifier.cycleAvatar()` increments index mod 8, persists immediately.
+**Cycling**: `AccountNotifier.cycleAvatar()` increments index mod 8, persists immediately. Does not cause navigation reset (GoRouter is created once, not recreated on state change).
 
-**Usage**: shown below the board in `OnlineGameScreen`. Tap to cycle through all 12 avatars.
+**Usage**: shown below the board in both `BotGameScreen` (size 64) and `OnlineGameScreen` (size 48). Tap to cycle. Also shown in settings screen avatar picker (size 72, with selection border).
+
+**Image generation prompts**: `tools/KID_AVATAR_PROMPTS.md` contains all 8 prompts. `tools/kid_avatar_prompt_helper.html` provides a step-by-step workflow for generating them. Labels use appearance-only descriptions (skin tone + hair) — no ethnic/racial categorization.
 
 ---
 
@@ -710,6 +728,7 @@ Two sections:
 
 **App**:
 - Language picker: `SegmentedButton` with English / Magyar options. Calls `localeProvider.notifier.setLocale()`. Persists via `shared_preferences`.
+- Avatar picker: `_AvatarPicker` renders all 8 kid avatar PNGs in a `Wrap`. Selected avatar highlighted with primary-colored border and shadow. Tapping sets avatar via `accountProvider.notifier.setAvatar(i)` without navigating away.
 - About: `showAboutDialog` with app name, version (1.0.0), description
 - Privacy Policy (TODO)
 
@@ -727,7 +746,7 @@ Two languages: English (`en`) and Hungarian (`hu`).
 | `nav*` | Bottom nav labels |
 | `login*` | Login screen |
 | `bot*` | Bot select + bot names/desc/difficulty |
-| `offline*` | Offline game screen |
+| `botGame*` | Bot game screen |
 | `online*` | Online game screen |
 | `playHuman*` | Human play screen |
 | `puzzle*` | Puzzle screen |
@@ -843,7 +862,7 @@ abstract class ChessPalsColors {
 
 ## 20. Known Constraints & Notes
 
-1. **Bot play requires internet** — all 8 bots are real Lichess accounts. There is a local heuristic bot for offline mode (level 1–8) but it is not Stockfish.
+1. **Bot play requires internet** — all 8 bots are real Lichess accounts. There is a local heuristic bot for practice mode (level 1–8) but it is not Stockfish.
 2. **Auth is OAuth2 PKCE** — the app uses Lichess OAuth2 with PKCE for login. The `web:mobile` scope is reserved for the official Lichess app and cannot be requested by third-party apps. Dev token injection (`--dart-define=LICHESS_TOKEN`) is available for development.
 3. **Rated games supported** — seeks and challenges support `rated: true/false` via a toggle in the Play Human screen.
 4. **`playerSide` from query param is unreliable** — the actual side is determined server-side from the `gameFull.white.id` vs the logged-in account id.
@@ -853,9 +872,9 @@ abstract class ChessPalsColors {
 8. **`PopScope` wrapping** — the entire `Scaffold` must be wrapped in `PopScope(canPop: false)` with `onPopInvokedWithResult` to intercept the Android back gesture.
 9. **Locale rebuild** — `ChessPalsApp` watches `localeProvider`; changing locale rebuilds the entire widget tree, updating all strings instantly without navigation.
 10. **AppBar title overflow** — when showing "Bot thinking..." in AppBar, wrap the text in `Flexible` with `TextOverflow.ellipsis` to prevent overflow on smaller screens or with long localized names.
-11. **Bot move delay** — offline bot waits 3 seconds before responding, giving kids time to see their move on the board. The "thinking" spinner and status banner display during this delay.
+11. **Bot move delay** — the bot waits 3 seconds before responding, giving kids time to see their move on the board. The "thinking" spinner and status banner display during this delay.
 12. **PNG animal assets** — all bot emotion avatars are AI-generated PNGs, post-processed via `tools/process_avatars.py` (center-crop to square, resize to 512×512, circular mask with transparent corners). Legacy SVGs still exist as top-level neutral avatars (`bee.svg` etc.) and in emotion subdirs but are no longer used. To re-process: `python3 tools/process_avatars.py ~/Downloads/chesspals_avatars`.
-13. **Resign confirmation** — both offline and online games show a confirmation dialog before resigning. Offline reuses the online localization keys (`onlineResignTitle`, `onlineResignContent`, etc.).
+13. **Resign confirmation** — both bot and online games show a confirmation dialog before resigning. Bot game screen reuses the online localization keys (`onlineResignTitle`, `onlineResignContent`, etc.).
 14. **Board API time control restriction** — `POST /api/board/seek` enforces `Speed >= Rapid` (≥480s estimated) for third-party apps. The `web:mobile` OAuth scope that bypasses this is reserved for the official Lichess app. Blitz (e.g., 5+3 = 420s) returns HTTP 400 "Invalid time control". The Challenge API (`POST /api/challenge/{username}`) is more permissive (allows Blitz+). All three time controls in the app (10+0, 10+5, 15+10) are Rapid and work with the Board API.
 15. **Chat excluded** — chat functionality is intentionally excluded from the app entirely. No chat UI, no approved phrases, no `sendChatMessage()` method.
 16. **Game abort handling** — when a game is aborted (e.g., no moves within 30s), the `gameState` event has `status == 'aborted'`. The app navigates home silently without showing an error dialog.

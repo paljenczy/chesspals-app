@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'puzzle.dart';
 import '../../network/lichess_client.dart';
 import '../../model/auth/lichess_account.dart';
-import '../game/offline_game_controller.dart' show toValidMoves;
+import '../game/bot_game_controller.dart' show toValidMoves;
 
 enum PuzzleResult { correct, wrong, solved }
 enum PuzzleMode { solving, viewingSolution, review }

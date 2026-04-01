@@ -6,17 +6,18 @@ import 'package:chessground/chessground.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../model/auth/lichess_account.dart';
 import '../../model/bot/bot_character.dart';
-import '../../model/game/offline_game_controller.dart';
+import '../../model/game/bot_game_controller.dart';
 import '../../service/reaction_audio.dart';
 import '../../utils/bot_l10n.dart';
 import '../game/bot_reaction.dart';
 import '../game/game_over_dialog.dart';
 
-/// Chess board screen for offline bot play.
+/// Chess board screen for bot play.
 /// The [level] (1–8) maps to a Stockfish difficulty, displayed as [BotCharacter].
-class OfflineGameScreen extends ConsumerStatefulWidget {
-  const OfflineGameScreen({
+class BotGameScreen extends ConsumerStatefulWidget {
+  const BotGameScreen({
     super.key,
     required this.level,
     required this.characterIndex,
@@ -26,10 +27,10 @@ class OfflineGameScreen extends ConsumerStatefulWidget {
   final int characterIndex;  // Index into BotCharacter.values for display
 
   @override
-  ConsumerState<OfflineGameScreen> createState() => _OfflineGameScreenState();
+  ConsumerState<BotGameScreen> createState() => _BotGameScreenState();
 }
 
-class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
+class _BotGameScreenState extends ConsumerState<BotGameScreen> {
   // ignore: prefer_const_declarations
   final _avatarKey = GlobalKey<BotCharacterAvatarState>();
   bool _dialogShown = false;
@@ -52,16 +53,16 @@ class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
       status == GameStatus.draw ||
       status == GameStatus.resigned;
 
-  void _showGameOverDialog(OfflineGameState state) {
+  void _showGameOverDialog(BotGameState state) {
     if (_dialogShown) return;
     _dialogShown = true;
 
     final l = AppLocalizations.of(context);
     final (text, color) = switch (state.status) {
-      GameStatus.whiteWins => (l.offlineStatusYouWon, Colors.green[800]!),
-      GameStatus.blackWins => (l.offlineStatusBotWins, Colors.red[700]!),
-      GameStatus.draw => (l.offlineStatusDraw, Colors.blue[700]!),
-      GameStatus.resigned => (l.offlineStatusBotWins, Colors.red[700]!),
+      GameStatus.whiteWins => (l.botGameStatusYouWon, Colors.green[800]!),
+      GameStatus.blackWins => (l.botGameStatusBotWins, Colors.red[700]!),
+      GameStatus.draw => (l.botGameStatusDraw, Colors.blue[700]!),
+      GameStatus.resigned => (l.botGameStatusBotWins, Colors.red[700]!),
       _ => ('', Colors.grey),
     };
 
@@ -74,7 +75,7 @@ class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
       );
       if (!mounted) return;
       // Reset the game so re-entering this bot starts fresh
-      ref.read(offlineGameProvider(widget.level).notifier).newGame();
+      ref.read(botGameProvider(widget.level).notifier).newGame();
       _dialogShown = false;
       if (choice == 'analyze') {
         context.push('/analysis', extra: {
@@ -95,8 +96,8 @@ class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
     final character = characters[widget.characterIndex.clamp(0, characters.length - 1)];
 
     // Detect reactions on each state change
-    ref.listen<AsyncValue<OfflineGameState>>(
-      offlineGameProvider(widget.level),
+    ref.listen<AsyncValue<BotGameState>>(
+      botGameProvider(widget.level),
       (prev, next) {
         final oldState = prev?.value;
         final newState = next.value;
@@ -105,7 +106,7 @@ class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
           oldState.position,
           newState.position,
           newState.lastMove,
-          playerSide: Side.white, // offline: player is always white
+          playerSide: Side.white,
         );
         if (reaction != null) {
           _avatarKey.currentState?.trigger(reaction);
@@ -119,7 +120,7 @@ class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
       },
     );
 
-    final gameState = ref.watch(offlineGameProvider(widget.level));
+    final gameState = ref.watch(botGameProvider(widget.level));
 
     return Scaffold(
       appBar: AppBar(
@@ -146,10 +147,10 @@ class _OfflineGameScreenState extends ConsumerState<OfflineGameScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: l.offlineTooltipNewGame,
+            tooltip: l.botGameTooltipNewGame,
             onPressed: () {
               _dialogShown = false;
-              ref.read(offlineGameProvider(widget.level).notifier).newGame();
+              ref.read(botGameProvider(widget.level).notifier).newGame();
             },
           ),
         ],
@@ -176,7 +177,7 @@ class _GameBody extends ConsumerWidget {
     required this.avatarKey,
   });
 
-  final OfflineGameState state;
+  final BotGameState state;
   final int level;
   final BotCharacter character;
   final GlobalKey<BotCharacterAvatarState> avatarKey;
@@ -184,90 +185,106 @@ class _GameBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
-    final controller = ref.read(offlineGameProvider(level).notifier);
-    final boardSize =
-        MediaQuery.of(context).size.width.clamp(200.0, 500.0).toDouble();
+    final controller = ref.read(botGameProvider(level).notifier);
     final isThinking = state.status == GameStatus.playing &&
         state.sideToMove == Side.black;
     final isGameOver = state.status != GameStatus.playing;
 
-    return Column(
-      children: [
-        // Bot character row
-        _BotRow(character: character, avatarKey: avatarKey, isThinking: isThinking),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Reserve space for rows around the board, then give the rest to the board
+        const chromHeight = 200.0; // bot row + status + player row + buttons + padding
+        final maxBoardFromWidth = constraints.maxWidth.clamp(200.0, 500.0);
+        final maxBoardFromHeight = (constraints.maxHeight - chromHeight).clamp(200.0, 500.0);
+        final boardSize = maxBoardFromWidth < maxBoardFromHeight
+            ? maxBoardFromWidth
+            : maxBoardFromHeight;
 
-        // Status banner (only during play)
-        _StatusBanner(state: state),
+        return Column(
+          children: [
+            // Bot character row
+            _BotRow(character: character, avatarKey: avatarKey, isThinking: isThinking),
 
-        // Board
-        Center(
-          child: SizedBox(
-            width: boardSize,
-            height: boardSize,
-            child: Chessboard(
-              size: boardSize,
-              orientation: Side.white,
-              fen: state.fen,
-              lastMove: state.lastMove,
-              game: GameData(
-                playerSide: PlayerSide.white,
-                sideToMove: state.sideToMove,
-                isCheck: state.isCheck,
-                validMoves: state.validMoves,
-                promotionMove: state.pendingPromotion,
-                onMove: (move, {viaDragAndDrop}) =>
-                    controller.onMove(move, viaDragAndDrop: viaDragAndDrop),
-                onPromotionSelection: controller.onPromotion,
-              ),
-              settings: ChessboardSettings(
-                colorScheme: ChessboardColorScheme.green,
-                pieceAssets: PieceSet.cburnett.assets,
+            // Status banner (only during play)
+            _StatusBanner(state: state),
+
+            // Board
+            Center(
+              child: SizedBox(
+                width: boardSize,
+                height: boardSize,
+                child: Chessboard(
+                  size: boardSize,
+                  orientation: Side.white,
+                  fen: state.fen,
+                  lastMove: state.lastMove,
+                  game: GameData(
+                    playerSide: PlayerSide.white,
+                    sideToMove: state.sideToMove,
+                    isCheck: state.isCheck,
+                    validMoves: state.validMoves,
+                    promotionMove: state.pendingPromotion,
+                    onMove: (move, {viaDragAndDrop}) =>
+                        controller.onMove(move, viaDragAndDrop: viaDragAndDrop),
+                    onPromotionSelection: controller.onPromotion,
+                  ),
+                  settings: ChessboardSettings(
+                    colorScheme: ChessboardColorScheme.green,
+                    pieceAssets: PieceSet.cburnett.assets,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
 
-        const SizedBox(height: 16),
+            // Player row
+            _PlayerRow(),
 
-        // Control row
-        if (!isGameOver)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _ActionButton(
-                label: l.offlineButtonResign,
-                icon: Icons.flag_outlined,
-                onTap: () async {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text(l.onlineResignTitle),
-                      content: Text(l.onlineResignContent),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: Text(l.onlineKeepPlaying),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          style: TextButton.styleFrom(foregroundColor: Colors.red),
-                          child: Text(l.onlineResignButton),
-                        ),
-                      ],
+            const SizedBox(height: 8),
+
+            // Control row
+            if (!isGameOver)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _ActionButton(
+                      label: l.botGameButtonResign,
+                      icon: Icons.flag_outlined,
+                      onTap: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(l.onlineResignTitle),
+                            content: Text(l.onlineResignContent),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: Text(l.onlineKeepPlaying),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                                child: Text(l.onlineResignButton),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true) controller.resign();
+                      },
                     ),
-                  );
-                  if (confirmed == true) controller.resign();
-                },
+                    const SizedBox(width: 16),
+                    _ActionButton(
+                      label: l.botGameButtonNewGame,
+                      icon: Icons.add_circle_outline,
+                      onTap: () => controller.newGame(),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 16),
-              _ActionButton(
-                label: l.offlineButtonNewGame,
-                icon: Icons.add_circle_outline,
-                onTap: () => controller.newGame(),
-              ),
-            ],
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -323,9 +340,47 @@ class _BotRow extends StatelessWidget {
   }
 }
 
+class _PlayerRow extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final account = ref.watch(accountProvider).value;
+    final avatarIndex = account?.avatarIndex ?? 0;
+    final username = account?.username ?? l.onlineYouLabel;
+    final rapid = account?.rapidRating;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Row(
+        children: [
+          KidAvatarWidget(
+            avatarIndex: avatarIndex,
+            size: 64,
+            onTap: () => ref.read(accountProvider.notifier).cycleAvatar(),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                username,
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              ),
+              Text(
+                rapid != null ? '$rapid ${l.onlineRapidSuffix}' : '',
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _StatusBanner extends StatelessWidget {
   const _StatusBanner({required this.state});
-  final OfflineGameState state;
+  final BotGameState state;
 
   @override
   Widget build(BuildContext context) {
@@ -334,8 +389,8 @@ class _StatusBanner extends StatelessWidget {
     if (state.status != GameStatus.playing) return const SizedBox.shrink();
 
     final (text, color) = state.sideToMove == Side.white
-        ? (l.offlineStatusYourTurn, Colors.green[700]!)
-        : (l.offlineStatusBotThinking, Colors.orange[700]!);
+        ? (l.botGameStatusYourTurn, Colors.green[700]!)
+        : (l.botGameStatusBotThinking, Colors.orange[700]!);
 
     return Container(
       width: double.infinity,

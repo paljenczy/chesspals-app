@@ -14,8 +14,8 @@ IMap<Square, ISet<Square>> toValidMoves(IMap<Square, SquareSet> legalMoves) {
   });
 }
 
-class OfflineGameState {
-  const OfflineGameState({
+class BotGameState {
+  const BotGameState({
     required this.position,
     required this.status,
     this.lastMove,
@@ -39,7 +39,7 @@ class OfflineGameState {
     return toValidMoves(position.legalMoves);
   }
 
-  OfflineGameState copyWith({
+  BotGameState copyWith({
     Position? position,
     GameStatus? status,
     NormalMove? lastMove,
@@ -47,7 +47,7 @@ class OfflineGameState {
     bool clearPromotion = false,
     List<NormalMove>? moveHistory,
   }) =>
-      OfflineGameState(
+      BotGameState(
         position: position ?? this.position,
         status: status ?? this.status,
         lastMove: lastMove ?? this.lastMove,
@@ -57,19 +57,19 @@ class OfflineGameState {
       );
 }
 
-/// Offline game controller — player is White, bot (simulated) is Black.
+/// Bot game controller — player is White, bot (simulated) is Black.
 /// [level] 1–8 maps to difficulty (1 = random moves, 8 = strongest heuristic).
-class OfflineGameNotifier extends AsyncNotifier<OfflineGameState> {
-  OfflineGameNotifier(this.level);
+class BotGameNotifier extends AsyncNotifier<BotGameState> {
+  BotGameNotifier(this.level);
 
   final int level;
 
   @override
-  Future<OfflineGameState> build() async {
+  Future<BotGameState> build() async {
     return _newGameState();
   }
 
-  OfflineGameState _newGameState() => OfflineGameState(
+  BotGameState _newGameState() => BotGameState(
         position: Chess.initial,
         status: GameStatus.playing,
       );
@@ -146,7 +146,7 @@ class OfflineGameNotifier extends AsyncNotifier<OfflineGameState> {
     }
   }
 
-  Future<void> _scheduleBotMove(OfflineGameState gameState) async {
+  Future<void> _scheduleBotMove(BotGameState gameState) async {
     await Future.delayed(const Duration(seconds: 3));
 
     final current = state.value;
@@ -207,7 +207,7 @@ NormalMove? _pickBotMove(IMap<Square, SquareSet> legalMoves, int level) {
 }
 
 /// Provider family — one AsyncNotifier per Stockfish level (1–8).
-final offlineGameProvider = AsyncNotifierProvider.family<
-    OfflineGameNotifier, OfflineGameState, int>(
-  (arg) => OfflineGameNotifier(arg),
+final botGameProvider = AsyncNotifierProvider.family<
+    BotGameNotifier, BotGameState, int>(
+  (arg) => BotGameNotifier(arg),
 );

@@ -344,53 +344,53 @@ abstract class AppLocalizations {
   /// **'{name} thinking...'**
   String botThinking(String name);
 
-  /// No description provided for @offlineStatusYourTurn.
+  /// No description provided for @botGameStatusYourTurn.
   ///
   /// In en, this message translates to:
   /// **'Your turn ♟'**
-  String get offlineStatusYourTurn;
+  String get botGameStatusYourTurn;
 
-  /// No description provided for @offlineStatusBotThinking.
+  /// No description provided for @botGameStatusBotThinking.
   ///
   /// In en, this message translates to:
   /// **'Bot is thinking...'**
-  String get offlineStatusBotThinking;
+  String get botGameStatusBotThinking;
 
-  /// No description provided for @offlineStatusYouWon.
+  /// No description provided for @botGameStatusYouWon.
   ///
   /// In en, this message translates to:
   /// **'You won! 🎉'**
-  String get offlineStatusYouWon;
+  String get botGameStatusYouWon;
 
-  /// No description provided for @offlineStatusBotWins.
+  /// No description provided for @botGameStatusBotWins.
   ///
   /// In en, this message translates to:
   /// **'Bot wins! Try again 💪'**
-  String get offlineStatusBotWins;
+  String get botGameStatusBotWins;
 
-  /// No description provided for @offlineStatusDraw.
+  /// No description provided for @botGameStatusDraw.
   ///
   /// In en, this message translates to:
   /// **'It\'s a draw! 🤝'**
-  String get offlineStatusDraw;
+  String get botGameStatusDraw;
 
-  /// No description provided for @offlineButtonResign.
+  /// No description provided for @botGameButtonResign.
   ///
   /// In en, this message translates to:
   /// **'Resign'**
-  String get offlineButtonResign;
+  String get botGameButtonResign;
 
-  /// No description provided for @offlineButtonNewGame.
+  /// No description provided for @botGameButtonNewGame.
   ///
   /// In en, this message translates to:
   /// **'New Game'**
-  String get offlineButtonNewGame;
+  String get botGameButtonNewGame;
 
-  /// No description provided for @offlineTooltipNewGame.
+  /// No description provided for @botGameTooltipNewGame.
   ///
   /// In en, this message translates to:
   /// **'New game'**
-  String get offlineTooltipNewGame;
+  String get botGameTooltipNewGame;
 
   /// No description provided for @onlineConnecting.
   ///

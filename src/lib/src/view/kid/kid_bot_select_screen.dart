@@ -6,7 +6,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../model/bot/bot_character.dart';
 import '../../utils/bot_l10n.dart';
 
-/// 8-animal grid. Tapping starts an offline Stockfish game at the matching level.
+/// 8-animal grid. Tapping starts a bot game at the matching level.
 class KidBotSelectScreen extends StatelessWidget {
   const KidBotSelectScreen({super.key});
 
