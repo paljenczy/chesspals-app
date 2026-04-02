@@ -163,6 +163,7 @@
   "puzzleButtonLoad": "Load Daily Puzzle",
   "puzzleButtonRandom": "Random Puzzle",
   "puzzleReadyText": "Ready to solve puzzles?",
+  "puzzleSetupTitle": "Solve Puzzles",
   "puzzleErrorNoInternet": "No internet connection.\nCheck your Wi-Fi and try again!",
   "puzzleErrorGeneric": "Something went wrong.\nPlease try again.",
   "puzzleTryAgain": "Try Again",

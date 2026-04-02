@@ -58,6 +58,16 @@ class _PuzzleSetupViewState extends ConsumerState<_PuzzleSetupView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Screen title
+            Text(
+              l.puzzleSetupTitle,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+
             // ── Topic row: Healthy Mix + Select a topic + selected display ──
             _SectionHeader(title: l.puzzleTopicLabel),
             const SizedBox(height: 8),

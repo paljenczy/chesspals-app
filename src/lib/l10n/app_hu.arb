@@ -128,6 +128,7 @@
   "puzzleButtonLoad": "Napi feladány betöltése",
   "puzzleButtonRandom": "Véletlenszerű feladány",
   "puzzleReadyText": "Készen állsz feladványok megoldására?",
+  "puzzleSetupTitle": "Feladványok",
   "puzzleErrorNoInternet": "Nincs internetkapcsolat.\nEllenőrizd a Wi-Fi-t és próbáld újra!",
   "puzzleErrorGeneric": "Valami hiba történt.\nKérlek próbáld újra.",
   "puzzleTryAgain": "Újrapróbálás",

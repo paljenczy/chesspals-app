@@ -373,6 +373,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get puzzleReadyText => 'Készen állsz feladványok megoldására?';
 
   @override
+  String get puzzleSetupTitle => 'Feladványok';
+
+  @override
   String get puzzleErrorNoInternet =>
       'Nincs internetkapcsolat.\nEllenőrizd a Wi-Fi-t és próbáld újra!';
 

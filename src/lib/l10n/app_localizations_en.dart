@@ -372,6 +372,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get puzzleReadyText => 'Ready to solve puzzles?';
 
   @override
+  String get puzzleSetupTitle => 'Solve Puzzles';
+
+  @override
   String get puzzleErrorNoInternet =>
       'No internet connection.\nCheck your Wi-Fi and try again!';
 

@@ -629,6 +629,8 @@ Key computed properties:
 **Setup view** (`_PuzzleSetupView`):
 Compact single-screen layout with all settings visible without scrolling:
 
+- **Screen title**: "Solve Puzzles" (`headlineSmall`, `w800`, centered) — matches bot select and play human screens.
+
 1. **Topic row** (Wrap):
    - **"Healthy Mix" FilterChip** — always visible. Tapping selects the `mix` theme AND immediately starts a puzzle.
    - **"Select a topic" ActionChip** — toggles the expanded topic picker. Shows expand/collapse arrow icon.

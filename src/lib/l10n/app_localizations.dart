@@ -764,6 +764,12 @@ abstract class AppLocalizations {
   /// **'Ready to solve puzzles?'**
   String get puzzleReadyText;
 
+  /// No description provided for @puzzleSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve Puzzles'**
+  String get puzzleSetupTitle;
+
   /// No description provided for @puzzleErrorNoInternet.
   ///
   /// In en, this message translates to:
