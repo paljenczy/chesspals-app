@@ -3,8 +3,9 @@ import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'puzzle.dart';
+import 'puzzle_theme.dart';
+import 'puzzle_stars.dart';
 import '../../network/lichess_client.dart';
-import '../../model/auth/lichess_account.dart';
 import '../game/bot_game_controller.dart' show toValidMoves;
 
 enum PuzzleResult { correct, wrong, solved }
@@ -87,6 +88,11 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
   @override
   Future<PuzzleState?> build() async => null;
 
+  /// Return to the setup screen (clear current puzzle).
+  void backToSetup() {
+    state = const AsyncData(null);
+  }
+
   Future<void> loadDailyPuzzle() async {
     state = const AsyncLoading();
     _failedOnce = false;
@@ -106,17 +112,14 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
     _failedOnce = false;
     try {
       final client = LichessClient();
-      // Use the player's puzzle rating to fetch appropriately-rated puzzles
-      final account = ref.read(accountProvider).value;
-      final puzzleRating = account?.puzzleRating;
+      final settings = ref.read(puzzleSettingsProvider);
       final puzzles = await client.fetchPuzzleBatch(
-        'mix',
+        settings.theme,
         count: 5,
-        ratingMin: puzzleRating != null ? puzzleRating - 100 : null,
-        ratingMax: puzzleRating != null ? puzzleRating + 100 : null,
+        difficulty: settings.difficulty.apiValue,
       );
       if (puzzles.isEmpty) throw Exception('No puzzles available');
-      final puzzle = Puzzle.fromLichessJson(puzzles.first, 'mix');
+      final puzzle = Puzzle.fromLichessJson(puzzles.first, settings.theme);
       state = AsyncData(_stateForPuzzle(puzzle, isDaily: false));
       _autoPlayFirstMove();
     } catch (e, st) {
@@ -238,6 +241,7 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
         clearHint: true,
       ));
       if (!_failedOnce) _submitResult(current.puzzle.id, win: true);
+      _recordStars();
       return;
     }
 
@@ -277,13 +281,25 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
     if (nextSolutionIndex >= current.puzzle.solution.length && !_failedOnce) {
       _submitResult(current.puzzle.id, win: true);
     }
+    if (puzzleSolved) _recordStars();
   }
 
   void _submitResult(String puzzleId, {required bool win}) {
+    final settings = ref.read(puzzleSettingsProvider);
+    if (!settings.rated) return; // Skip submission for unrated puzzles
     final client = LichessClient();
     client
-        .submitPuzzleResults('mix', [(id: puzzleId, win: win)])
+        .submitPuzzleResults(settings.theme, [(id: puzzleId, win: win)])
         .catchError((_) {}); // best-effort, ignore errors
+  }
+
+  void _recordStars() {
+    final stars = ref.read(puzzleStarsProvider.notifier);
+    if (!_failedOnce) {
+      stars.recordPerfectSolve();
+    } else {
+      stars.recordImperfectSolve();
+    }
   }
 
   void showHint() {
@@ -361,6 +377,7 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
       moveHistory: moves,
       reviewIndex: positions.length - 1,
     ));
+    _recordStars(); // always imperfect here since _failedOnce is true
   }
 
   void reviewStepBack() {
@@ -431,3 +448,17 @@ final puzzleControllerProvider =
     AsyncNotifierProvider<PuzzleController, PuzzleState?>(
   PuzzleController.new,
 );
+
+final puzzleSettingsProvider =
+    NotifierProvider<PuzzleSettingsNotifier, PuzzleSettings>(
+  PuzzleSettingsNotifier.new,
+);
+
+class PuzzleSettingsNotifier extends Notifier<PuzzleSettings> {
+  @override
+  PuzzleSettings build() => const PuzzleSettings();
+
+  void update(PuzzleSettings Function(PuzzleSettings) updater) {
+    state = updater(state);
+  }
+}

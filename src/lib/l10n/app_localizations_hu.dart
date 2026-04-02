@@ -349,7 +349,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get puzzleHint => 'Segítség kérése';
 
   @override
-  String get puzzleViewSolution => 'Megoldás megtekintése';
+  String get puzzleViewSolution => 'Megoldás';
 
   @override
   String get puzzleContinueTraining => 'Következő feladány';
@@ -381,6 +381,88 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get puzzleTryAgain => 'Újrapróbálás';
+
+  @override
+  String get puzzleCategoryMeta => 'Ajánlott';
+
+  @override
+  String get puzzleCategoryTactics => 'Taktikák';
+
+  @override
+  String get puzzleCategoryCheckmates => 'Mattminták';
+
+  @override
+  String get puzzleCategoryPhases => 'Játékfázisok';
+
+  @override
+  String get puzzleCategoryEndgameTypes => 'Végjátéktípusok';
+
+  @override
+  String get puzzleCategoryGoals => 'Célok';
+
+  @override
+  String get puzzleCategorySpecialMoves => 'Különleges lépések';
+
+  @override
+  String get puzzleCategoryLength => 'Feladvány hossza';
+
+  @override
+  String get puzzleCategoryAttackSide => 'Támadási oldal';
+
+  @override
+  String get puzzleCategoryOrigin => 'Eredet';
+
+  @override
+  String get puzzleDifficultyEasiest => 'Legkönnyebb';
+
+  @override
+  String get puzzleDifficultyEasier => 'Könnyebb';
+
+  @override
+  String get puzzleDifficultyNormal => 'Normál';
+
+  @override
+  String get puzzleDifficultyHarder => 'Nehezebb';
+
+  @override
+  String get puzzleDifficultyHardest => 'Legnehezebb';
+
+  @override
+  String get puzzleRated => 'Értékelt';
+
+  @override
+  String get puzzleUnrated => 'Nem értékelt';
+
+  @override
+  String get puzzleRatedNote =>
+      'Az értékelt feladványok befolyásolják a Lichess feladvány-értékelésedet.';
+
+  @override
+  String get puzzleUnratedNote =>
+      'Gyakorlás mód — az értékelésed nem változik.';
+
+  @override
+  String get puzzleStartTraining => 'Gyakorlás indítása';
+
+  @override
+  String get puzzleTopicLabel => 'Téma';
+
+  @override
+  String get puzzleSelectTopic => 'Téma kiválasztása';
+
+  @override
+  String get puzzleDifficultyLabel => 'Nehézség';
+
+  @override
+  String get puzzleChangeSettings => 'Beállítások módosítása';
+
+  @override
+  String puzzleStreakLabel(int count) {
+    return '$count egymás után';
+  }
+
+  @override
+  String get puzzleStreakStart => 'Kezdjünk egy sorozatot!';
 
   @override
   String get settingsTitle => 'Beállítások';

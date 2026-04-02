@@ -382,6 +382,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get puzzleTryAgain => 'Try Again';
 
   @override
+  String get puzzleCategoryMeta => 'Recommended';
+
+  @override
+  String get puzzleCategoryTactics => 'Tactics';
+
+  @override
+  String get puzzleCategoryCheckmates => 'Checkmate Patterns';
+
+  @override
+  String get puzzleCategoryPhases => 'Game Phases';
+
+  @override
+  String get puzzleCategoryEndgameTypes => 'Endgame Types';
+
+  @override
+  String get puzzleCategoryGoals => 'Goals';
+
+  @override
+  String get puzzleCategorySpecialMoves => 'Special Moves';
+
+  @override
+  String get puzzleCategoryLength => 'Puzzle Length';
+
+  @override
+  String get puzzleCategoryAttackSide => 'Attack Side';
+
+  @override
+  String get puzzleCategoryOrigin => 'Origin';
+
+  @override
+  String get puzzleDifficultyEasiest => 'Easiest';
+
+  @override
+  String get puzzleDifficultyEasier => 'Easier';
+
+  @override
+  String get puzzleDifficultyNormal => 'Normal';
+
+  @override
+  String get puzzleDifficultyHarder => 'Harder';
+
+  @override
+  String get puzzleDifficultyHardest => 'Hardest';
+
+  @override
+  String get puzzleRated => 'Rated';
+
+  @override
+  String get puzzleUnrated => 'Unrated';
+
+  @override
+  String get puzzleRatedNote =>
+      'Rated puzzles affect your Lichess puzzle rating.';
+
+  @override
+  String get puzzleUnratedNote => 'Practice mode — your rating won\'t change.';
+
+  @override
+  String get puzzleStartTraining => 'Start Training';
+
+  @override
+  String get puzzleTopicLabel => 'Topic';
+
+  @override
+  String get puzzleSelectTopic => 'Select a topic';
+
+  @override
+  String get puzzleDifficultyLabel => 'Difficulty';
+
+  @override
+  String get puzzleChangeSettings => 'Change Settings';
+
+  @override
+  String puzzleStreakLabel(int count) {
+    return '$count in a row';
+  }
+
+  @override
+  String get puzzleStreakStart => 'Let\'s start a streak!';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

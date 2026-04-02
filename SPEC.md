@@ -148,7 +148,9 @@ src/
         │   │   └── parental_settings.dart
         │   ├── puzzle/
         │   │   ├── puzzle.dart
-        │   │   └── puzzle_controller.dart
+        │   │   ├── puzzle_controller.dart
+        │   │   ├── puzzle_theme.dart         # 79 Lichess themes, difficulty, settings
+        │   │   └── puzzle_stars.dart          # daily stars & streak tracking
         │   └── settings/
         │       └── locale_provider.dart
         ├── network/
@@ -312,7 +314,7 @@ All calls to `https://lichess.org` with `Authorization: Bearer <token>`.
 | `offerDraw(gameId)` | POST | `/api/board/game/{gameId}/draw/yes` | Offer or accept a draw |
 | `declineDraw(gameId)` | POST | `/api/board/game/{gameId}/draw/no` | Decline a draw offer |
 | `fetchDailyPuzzle()` | GET | `/api/puzzle/daily` | Returns puzzle JSON |
-| `fetchPuzzleBatch(angle, nb, ratingMin, ratingMax)` | GET | `/api/puzzle/batch/{angle}` | Returns batch of puzzles |
+| `fetchPuzzleBatch(angle, nb, difficulty)` | GET | `/api/puzzle/batch/{angle}` | Returns batch of puzzles |
 | `submitPuzzleResults(angle, results)` | POST | `/api/puzzle/batch/{angle}` | Submits solve/fail data |
 | `seekOpponent(minutes, increment, rated)` | POST | `/api/board/seek` | Posts seek (fire-and-forget, blocks until matched) |
 | `streamEvents()` | GET | `/api/stream/event` | Returns `Stream<Map<String,dynamic>>` of user events |
@@ -535,9 +537,7 @@ Post-game move-by-move replay screen.
 
 **`Puzzle`** fields: `id`, `fen` (FEN before the triggering move), `fenAfterTrigger` (FEN after the triggering move — where the user starts solving), `triggerUci` (UCI of the last PGN move — the triggering move to auto-play), `initialPly`, `solution` (list of UCI moves — solution[0] is the user's first move), `rating`, `themes`, `angle`.
 
-**Fetching**: `GET /api/puzzle/daily` and `GET /api/puzzle/batch/mix?nb=50&ratingMin=X&ratingMax=Y`.
-
-**Local cache**: SQLite via `sqflite`. Puzzles stored in a `puzzle_batch` table, consumed one by one.
+**Fetching**: `GET /api/puzzle/daily` and `GET /api/puzzle/batch/{angle}?nb=5&difficulty={difficulty}`.
 
 **PGN parsing** (`_parsePgn`): The Lichess puzzle API returns a game PGN containing all moves up to the puzzle position. The parser replays all PGN moves using dartchess's built-in `PgnGame.parsePgn()` + `Position.parseSan()` and returns three values:
 - `fenBefore`: position before the last PGN move (what the user sees initially)
@@ -546,11 +546,33 @@ Post-game move-by-move replay screen.
 
 **Lichess puzzle structure**: The last PGN move is the opponent's "triggering" move that sets up the puzzle. `solution[0]` is the user's first move to find, not the trigger. The user plays the side to move **after** the trigger.
 
-**Kid difficulty filter**: Map rating to stars:
-- `<1000` → ⭐ Easy
-- `1000–1300` → ⭐⭐ Medium
-- `1300–1600` → ⭐⭐⭐ Hard
-- `>1600` → ⭐⭐⭐⭐ Expert
+### Puzzle Themes (lib/src/model/puzzle/puzzle_theme.dart)
+
+**79 Lichess puzzle themes** organized into 10 categories, each with API key, English name, Hungarian translation (from official Lichess hu-HU.xml), emoji, and category.
+
+**`PuzzleThemeCategory`** enum: `meta`, `tactics`, `checkmates`, `phases`, `endgameTypes`, `goals`, `specialMoves`, `length`, `attackSide`, `origin`. Each has a `localizedName(AppLocalizations l)` method.
+
+**`PuzzleDifficulty`** enum: `easiest`, `easier`, `normal`, `harder`, `hardest`. Each has an `apiValue` getter returning the Lichess API difficulty string. These map to rating offsets: -600, -300, 0, +300, +600.
+
+**`PuzzleTheme`** class: `apiKey`, `nameEn`, `nameHu`, `emoji`, `category`. Static `all` list, `groupedByCategory` (LinkedHashMap), `fromApiKey(String)`. `localizedName(BuildContext)` returns Hungarian or English based on locale.
+
+**`PuzzleSettings`** class: `theme` (String, default `'mix'`), `difficulty` (PuzzleDifficulty, default `normal`), `rated` (bool, default `true`). Has `copyWith`.
+
+**`puzzleSettingsProvider`** = `NotifierProvider<PuzzleSettingsNotifier, PuzzleSettings>`. `PuzzleSettingsNotifier` has `update(PuzzleSettings Function(PuzzleSettings) updater)`.
+
+### Puzzle Stars (lib/src/model/puzzle/puzzle_stars.dart)
+
+Daily stars and streak tracking — positive-only incentives, no negative counters.
+
+**`PuzzleStarsState`**: `stars` (total earned today), `streak` (consecutive perfect solves), `dateKey` (ISO date for daily reset).
+
+**`PuzzleStarsNotifier extends Notifier<PuzzleStarsState>`**:
+- `build()`: returns empty state, kicks off `_loadFromDisk()` async. Stores the future in `_ready`.
+- `_loadFromDisk()`: loads from SharedPreferences, checks dateKey against today, resets if different day.
+- `recordPerfectSolve()`: awaits `_ready`, increments stars + streak, persists.
+- `recordImperfectSolve()`: awaits `_ready`, resets streak to 0 (stars unchanged), persists.
+
+**Persistence keys** (SharedPreferences): `puzzle_stars_count`, `puzzle_stars_streak`, `puzzle_stars_date`.
 
 ### PuzzleController (lib/src/model/puzzle/puzzle_controller.dart)
 
@@ -582,6 +604,10 @@ Key computed properties:
 3. If correct and more moves remain: show "Best move!" banner, wait 600ms, auto-play opponent's response (`solution[solutionIndex + 1]`), advance index by 2
 4. If correct and no more moves: show "Puzzle complete!" banner. Submit `win: true` if no prior failures.
 
+**Stars recording** (`_recordStars`): Called when a puzzle reaches `PuzzleResult.solved`. If `!_failedOnce` → `recordPerfectSolve()`. If `_failedOnce` → `recordImperfectSolve()`.
+
+**Puzzle results submission**: Checks `settings.rated` — skips submission for unrated puzzles. Submits win/loss via `POST /api/puzzle/batch/{angle}`. Best-effort, errors ignored.
+
 **Hint system (`showHint`)**:
 - Parses the expected move (`solution[solutionIndex]`) and sets `hintSquare` to the move's source square
 - The UI renders a semi-transparent green circle on that square via chessground's `shapes` parameter (`Circle(color: Color(0x8015781B), orig: hintSquare)`)
@@ -598,23 +624,40 @@ Key computed properties:
 - Board updates position and lastMove to match the review index
 - Board is locked (validMoves returns empty)
 
-**Puzzle results submission**: after each puzzle, submit win/loss via `POST /api/puzzle/batch/mix`. Best-effort, errors ignored.
-
 ### PuzzleScreen (lib/src/view/puzzle/puzzle_screen.dart)
 
-- **Loading**: spinner
-- **No puzzle loaded**: `_NoPuzzleView` with "Load Daily Puzzle" and "Random Puzzle" buttons
-- **Active puzzle**:
-  - Title (daily vs numbered), subtitle adapts to mode:
-    - Solving: "White/Black to move — find the best move!"
-    - Viewing solution: "Showing solution..."
-    - Review: "Puzzle complete!"
-  - Chessboard with hint circle shapes overlay
-  - Result banner (correct/wrong/solved) with kid-friendly text and emoji
-  - Toolbar during solving: Hint (lightbulb icon) + View Solution (eye icon) buttons
-  - Move navigation bar during review: |◁ ◁ ▷ ▷| buttons
-  - "Continue Training" button after solved or in review mode
-- **Error**: network error vs generic, with Try Again button
+**Setup view** (`_PuzzleSetupView`):
+Compact single-screen layout with all settings visible without scrolling:
+
+1. **Topic row** (Wrap):
+   - **"Healthy Mix" FilterChip** — always visible. Tapping selects the `mix` theme AND immediately starts a puzzle.
+   - **"Select a topic" ActionChip** — toggles the expanded topic picker. Shows expand/collapse arrow icon.
+   - **Selected topic chip** — when a non-mix theme is selected and the picker is collapsed, displays the selected theme name as a read-only FilterChip. Tapping it reopens the picker.
+
+2. **Expanded topic picker** (conditional, below the topic row):
+   - Collapsible category headers (tap to expand/collapse, one open at a time).
+   - Theme chips within expanded category. Selecting a theme updates `puzzleSettingsProvider`, collapses the picker, but does NOT auto-start a puzzle.
+
+3. **Difficulty chips** (Wrap of ChoiceChips): easiest, easier, normal, harder, hardest.
+
+4. **Rated/Unrated toggle** (SegmentedButton): with dynamic info note below.
+
+5. **"Start Training" button** (ElevatedButton.icon): loads a puzzle using the selected theme + difficulty + rated settings.
+
+**Active puzzle view** (`_PuzzleView`):
+- Header with arrow_back IconButton (always shown, returns to setup) + puzzle title
+- Subtitle adapts to mode: solving / viewing solution / review
+- Chessboard with hint circle shapes overlay
+- **Stars & streak bar** (`_StarsBar`): shown beneath the board when stars > 0 or streak > 0
+  - Stars: 🌟 icons for each group of 5, ⭐ for remainder, count in gold text
+  - Streak ≥ 1: `🔥 X in a row`
+  - Streak = 0 (but stars > 0): `💪 Let's start a streak!` (encouraging, no negative display)
+- Result banner (correct/wrong/solved) with kid-friendly text and emoji
+- Toolbar during solving: Hint (lightbulb icon) + View Solution (eye icon) buttons
+- Move navigation bar during review: |◁ ◁ ▷ ▷| buttons
+- "Continue Training" button after solved or in review mode
+
+**Error view**: network error vs generic, with button to return to setup
 
 ---
 
@@ -761,6 +804,8 @@ Two languages: English (`en`) and Hungarian (`hu`).
 - `playHumanYourRating(int rating)`
 - `playHumanTimeMinutes(String label)`
 - `puzzleTitle(String id)`
+- `puzzleStreakLabel(int count)` — e.g. "3 in a row" / "3 egymás után"
+- `analysisMoveCounter(int current, int total)`
 
 ### Bot character localization pattern
 Bot names/descriptions/difficulties are NOT stored in the enum (which holds only English). Helper functions in `lib/src/utils/bot_l10n.dart` use switch expressions on the `BotCharacter` enum to look up the appropriate ARB key:

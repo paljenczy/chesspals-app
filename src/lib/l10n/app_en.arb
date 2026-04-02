@@ -167,6 +167,41 @@
   "puzzleErrorGeneric": "Something went wrong.\nPlease try again.",
   "puzzleTryAgain": "Try Again",
 
+  "puzzleCategoryMeta": "Recommended",
+  "puzzleCategoryTactics": "Tactics",
+  "puzzleCategoryCheckmates": "Checkmate Patterns",
+  "puzzleCategoryPhases": "Game Phases",
+  "puzzleCategoryEndgameTypes": "Endgame Types",
+  "puzzleCategoryGoals": "Goals",
+  "puzzleCategorySpecialMoves": "Special Moves",
+  "puzzleCategoryLength": "Puzzle Length",
+  "puzzleCategoryAttackSide": "Attack Side",
+  "puzzleCategoryOrigin": "Origin",
+
+  "puzzleDifficultyEasiest": "Easiest",
+  "puzzleDifficultyEasier": "Easier",
+  "puzzleDifficultyNormal": "Normal",
+  "puzzleDifficultyHarder": "Harder",
+  "puzzleDifficultyHardest": "Hardest",
+
+  "puzzleRated": "Rated",
+  "puzzleUnrated": "Unrated",
+  "puzzleRatedNote": "Rated puzzles affect your Lichess puzzle rating.",
+  "puzzleUnratedNote": "Practice mode — your rating won't change.",
+  "puzzleStartTraining": "Start Training",
+  "puzzleTopicLabel": "Topic",
+  "puzzleSelectTopic": "Select a topic",
+  "puzzleDifficultyLabel": "Difficulty",
+  "puzzleChangeSettings": "Change Settings",
+
+  "puzzleStreakLabel": "{count} in a row",
+  "@puzzleStreakLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "puzzleStreakStart": "Let's start a streak!",
+
   "settingsTitle": "Settings",
   "settingsSectionApp": "App",
   "settingsAbout": "About ChessPals",

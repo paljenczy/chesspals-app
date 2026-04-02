@@ -782,6 +782,162 @@ abstract class AppLocalizations {
   /// **'Try Again'**
   String get puzzleTryAgain;
 
+  /// No description provided for @puzzleCategoryMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get puzzleCategoryMeta;
+
+  /// No description provided for @puzzleCategoryTactics.
+  ///
+  /// In en, this message translates to:
+  /// **'Tactics'**
+  String get puzzleCategoryTactics;
+
+  /// No description provided for @puzzleCategoryCheckmates.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkmate Patterns'**
+  String get puzzleCategoryCheckmates;
+
+  /// No description provided for @puzzleCategoryPhases.
+  ///
+  /// In en, this message translates to:
+  /// **'Game Phases'**
+  String get puzzleCategoryPhases;
+
+  /// No description provided for @puzzleCategoryEndgameTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Endgame Types'**
+  String get puzzleCategoryEndgameTypes;
+
+  /// No description provided for @puzzleCategoryGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get puzzleCategoryGoals;
+
+  /// No description provided for @puzzleCategorySpecialMoves.
+  ///
+  /// In en, this message translates to:
+  /// **'Special Moves'**
+  String get puzzleCategorySpecialMoves;
+
+  /// No description provided for @puzzleCategoryLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Puzzle Length'**
+  String get puzzleCategoryLength;
+
+  /// No description provided for @puzzleCategoryAttackSide.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack Side'**
+  String get puzzleCategoryAttackSide;
+
+  /// No description provided for @puzzleCategoryOrigin.
+  ///
+  /// In en, this message translates to:
+  /// **'Origin'**
+  String get puzzleCategoryOrigin;
+
+  /// No description provided for @puzzleDifficultyEasiest.
+  ///
+  /// In en, this message translates to:
+  /// **'Easiest'**
+  String get puzzleDifficultyEasiest;
+
+  /// No description provided for @puzzleDifficultyEasier.
+  ///
+  /// In en, this message translates to:
+  /// **'Easier'**
+  String get puzzleDifficultyEasier;
+
+  /// No description provided for @puzzleDifficultyNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get puzzleDifficultyNormal;
+
+  /// No description provided for @puzzleDifficultyHarder.
+  ///
+  /// In en, this message translates to:
+  /// **'Harder'**
+  String get puzzleDifficultyHarder;
+
+  /// No description provided for @puzzleDifficultyHardest.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardest'**
+  String get puzzleDifficultyHardest;
+
+  /// No description provided for @puzzleRated.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated'**
+  String get puzzleRated;
+
+  /// No description provided for @puzzleUnrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrated'**
+  String get puzzleUnrated;
+
+  /// No description provided for @puzzleRatedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Rated puzzles affect your Lichess puzzle rating.'**
+  String get puzzleRatedNote;
+
+  /// No description provided for @puzzleUnratedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice mode — your rating won\'t change.'**
+  String get puzzleUnratedNote;
+
+  /// No description provided for @puzzleStartTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Training'**
+  String get puzzleStartTraining;
+
+  /// No description provided for @puzzleTopicLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic'**
+  String get puzzleTopicLabel;
+
+  /// No description provided for @puzzleSelectTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a topic'**
+  String get puzzleSelectTopic;
+
+  /// No description provided for @puzzleDifficultyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get puzzleDifficultyLabel;
+
+  /// No description provided for @puzzleChangeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Settings'**
+  String get puzzleChangeSettings;
+
+  /// No description provided for @puzzleStreakLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} in a row'**
+  String puzzleStreakLabel(int count);
+
+  /// No description provided for @puzzleStreakStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s start a streak!'**
+  String get puzzleStreakStart;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

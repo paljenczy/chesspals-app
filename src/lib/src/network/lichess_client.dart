@@ -181,16 +181,16 @@ class LichessClient {
     return jsonDecode(response.body) as Map<String, dynamic>;
   }
 
-  /// GET /api/puzzle/batch/{angle}?nb={count} — Fetch offline puzzle batch.
+  /// GET /api/puzzle/batch/{angle}?nb={count}&difficulty={difficulty}
+  /// Fetch a batch of puzzles filtered by theme and difficulty.
   Future<List<Map<String, dynamic>>> fetchPuzzleBatch(
     String angle, {
     int count = 50,
-    int? ratingMin,
-    int? ratingMax,
+    String? difficulty,
   }) async {
     final headers = await _authHeaders;
     final params = <String, String>{'nb': count.toString()};
-    if (ratingMin != null) params['difficulty'] = 'normal'; // Lichess uses angle + difficulty
+    if (difficulty != null) params['difficulty'] = difficulty;
     final uri = Uri.parse('$_baseUrl/api/puzzle/batch/$angle').replace(queryParameters: params);
     final response = await _httpClient.get(uri, headers: headers);
     _checkStatus(response);
