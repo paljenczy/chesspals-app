@@ -176,18 +176,6 @@ abstract class AppLocalizations {
   /// **'Start easy and work your way up 🌟'**
   String get botSelectSubtitle;
 
-  /// No description provided for @botErrorLoginRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Login required'**
-  String get botErrorLoginRequired;
-
-  /// No description provided for @botErrorCouldNotStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not start game'**
-  String get botErrorCouldNotStart;
-
   /// No description provided for @botRatingLabel.
   ///
   /// In en, this message translates to:
@@ -410,12 +398,6 @@ abstract class AppLocalizations {
   /// **'You'**
   String get onlineYouLabel;
 
-  /// No description provided for @onlineOpponentThinking.
-  ///
-  /// In en, this message translates to:
-  /// **'{name} thinking...'**
-  String onlineOpponentThinking(String name);
-
   /// No description provided for @onlineOpponentsTurn.
   ///
   /// In en, this message translates to:
@@ -494,18 +476,6 @@ abstract class AppLocalizations {
   /// **'Resign'**
   String get onlineResignButton;
 
-  /// No description provided for @onlinePlayAgain.
-  ///
-  /// In en, this message translates to:
-  /// **'Play Again'**
-  String get onlinePlayAgain;
-
-  /// No description provided for @onlineYourTurnBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'Your turn'**
-  String get onlineYourTurnBadge;
-
   /// No description provided for @onlineOpponentLabel.
   ///
   /// In en, this message translates to:
@@ -583,12 +553,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{label} minutes'**
   String playHumanTimeMinutes(String label);
-
-  /// No description provided for @playHumanDescFast.
-  ///
-  /// In en, this message translates to:
-  /// **'Super fast! Think quickly ⚡'**
-  String get playHumanDescFast;
 
   /// No description provided for @playHumanDescMedium.
   ///
@@ -733,36 +697,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Showing solution...'**
   String get puzzleViewingSolution;
-
-  /// No description provided for @puzzleButtonDaily.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily'**
-  String get puzzleButtonDaily;
-
-  /// No description provided for @puzzleButtonNext.
-  ///
-  /// In en, this message translates to:
-  /// **'Next Puzzle'**
-  String get puzzleButtonNext;
-
-  /// No description provided for @puzzleButtonLoad.
-  ///
-  /// In en, this message translates to:
-  /// **'Load Daily Puzzle'**
-  String get puzzleButtonLoad;
-
-  /// No description provided for @puzzleButtonRandom.
-  ///
-  /// In en, this message translates to:
-  /// **'Random Puzzle'**
-  String get puzzleButtonRandom;
-
-  /// No description provided for @puzzleReadyText.
-  ///
-  /// In en, this message translates to:
-  /// **'Ready to solve puzzles?'**
-  String get puzzleReadyText;
 
   /// No description provided for @puzzleSetupTitle.
   ///

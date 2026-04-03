@@ -889,21 +889,12 @@ PIN and time enforcement are stubbed — UI placeholders exist in `SettingsScree
 ## 19. Styles
 
 ### Colors (lib/src/styles/colors.dart)
-
-Two color palettes defined:
-
-**`ChessPalsColors`** (classic green, default):
 ```dart
-primary = Color(0xFF4CAF50);       // Forest green
-surface = Color(0xFFF9FBF2);        // Off-white
-accent  = Color(0xFFFF9800);        // Warm orange
-```
-
-**`WatercolorColors`** (derived from avatar illustrations):
-```dart
-primary = Color(0xFF8B6B4A);       // Warm brown (avatar borders)
-surface = Color(0xFFF5ECD7);        // Parchment cream
-accent  = Color(0xFFD4A843);        // Warm gold/honey
+abstract class ChessPalsColors {
+  static const primary = Color(0xFF4CAF50);       // Forest green
+  surface = Color(0xFFF9FBF2);                     // Off-white
+  accent  = Color(0xFFFF9800);                     // Warm orange
+}
 ```
 
 ### Typography (lib/src/styles/typography.dart)
@@ -911,9 +902,7 @@ accent  = Color(0xFFD4A843);        // Warm gold/honey
 - Weights used: 400 (regular), 600 (semibold), 700 (bold), 800 (extrabold)
 
 ### Theme (lib/src/styles/theme.dart)
-- `const bool useWatercolorTheme` toggle at top of file (default `false` = classic green)
-- `ChessPalsTheme.light` selects theme based on the toggle
-- Both themes share a `_buildTheme()` builder with Material 3 `ColorScheme.fromSeed`
+- `ChessPalsTheme.light` → `ThemeData` with Material 3, `ColorScheme.fromSeed(seedColor: ChessPalsColors.primary)`, Nunito text theme
 
 ---
 

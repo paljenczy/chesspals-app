@@ -22,8 +22,6 @@
 
   "botSelectTitle": "Choose your opponent!",
   "botSelectSubtitle": "Start easy and work your way up 🌟",
-  "botErrorLoginRequired": "Login required",
-  "botErrorCouldNotStart": "Could not start game",
   "botRatingLabel": "~{rating} rapid",
   "@botRatingLabel": {
     "placeholders": {
@@ -77,12 +75,6 @@
   "onlineConnecting": "Connecting...",
   "onlineYourTurn": "Your turn",
   "onlineYouLabel": "You",
-  "onlineOpponentThinking": "{name} thinking...",
-  "@onlineOpponentThinking": {
-    "placeholders": {
-      "name": { "type": "String" }
-    }
-  },
   "onlineOpponentsTurn": "Opponent's turn",
   "onlineResultWin": "You won! 🎉",
   "onlineResultLoss": "You lost",
@@ -96,8 +88,6 @@
   "onlineKeepPlaying": "Keep playing",
   "onlineCancelGame": "Cancel game",
   "onlineResignButton": "Resign",
-  "onlinePlayAgain": "Play Again",
-  "onlineYourTurnBadge": "Your turn",
   "onlineOpponentLabel": "Opponent",
   "onlineRapidSuffix": "rapid",
   "onlineConnectionError": "Connection error:\n{error}",
@@ -127,7 +117,6 @@
       "label": { "type": "String" }
     }
   },
-  "playHumanDescFast": "Super fast! Think quickly ⚡",
   "playHumanDescMedium": "Fast and fun 🏃",
   "playHumanDescSlow": "Take your time and think carefully 🧘",
   "playHumanDescDeep": "Plenty of time to think deeply 🌳",
@@ -158,11 +147,6 @@
   "puzzleViewSolution": "View solution",
   "puzzleContinueTraining": "Continue Training",
   "puzzleViewingSolution": "Showing solution...",
-  "puzzleButtonDaily": "Daily",
-  "puzzleButtonNext": "Next Puzzle",
-  "puzzleButtonLoad": "Load Daily Puzzle",
-  "puzzleButtonRandom": "Random Puzzle",
-  "puzzleReadyText": "Ready to solve puzzles?",
   "puzzleSetupTitle": "Solve Puzzles",
   "puzzleErrorNoInternet": "No internet connection.\nCheck your Wi-Fi and try again!",
   "puzzleErrorGeneric": "Something went wrong.\nPlease try again.",

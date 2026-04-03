@@ -51,12 +51,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get botSelectSubtitle => 'Kezdd könnyűvel és haladj felfelé 🌟';
 
   @override
-  String get botErrorLoginRequired => 'Bejelentkezés szükséges';
-
-  @override
-  String get botErrorCouldNotStart => 'Nem sikerült elindítani a játékot';
-
-  @override
   String botRatingLabel(int rating) {
     return '~$rating gyors';
   }
@@ -179,11 +173,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get onlineYouLabel => 'Te';
 
   @override
-  String onlineOpponentThinking(String name) {
-    return '$name gondolkodik...';
-  }
-
-  @override
   String get onlineOpponentsTurn => 'Az ellenfél lép';
 
   @override
@@ -222,12 +211,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get onlineResignButton => 'Feladom';
-
-  @override
-  String get onlinePlayAgain => 'Újrajátszás';
-
-  @override
-  String get onlineYourTurnBadge => 'Te jössz';
 
   @override
   String get onlineOpponentLabel => 'Ellenfél';
@@ -274,9 +257,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String playHumanTimeMinutes(String label) {
     return '$label perc';
   }
-
-  @override
-  String get playHumanDescFast => 'Villámgyors! Gondolkodj gyorsan ⚡';
 
   @override
   String get playHumanDescMedium => 'Gyors és szórakoztató 🏃';
@@ -356,21 +336,6 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get puzzleViewingSolution => 'Megoldás mutatása...';
-
-  @override
-  String get puzzleButtonDaily => 'Napi';
-
-  @override
-  String get puzzleButtonNext => 'Következő feladány';
-
-  @override
-  String get puzzleButtonLoad => 'Napi feladány betöltése';
-
-  @override
-  String get puzzleButtonRandom => 'Véletlenszerű feladány';
-
-  @override
-  String get puzzleReadyText => 'Készen állsz feladványok megoldására?';
 
   @override
   String get puzzleSetupTitle => 'Feladványok';

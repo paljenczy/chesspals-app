@@ -51,12 +51,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get botSelectSubtitle => 'Start easy and work your way up 🌟';
 
   @override
-  String get botErrorLoginRequired => 'Login required';
-
-  @override
-  String get botErrorCouldNotStart => 'Could not start game';
-
-  @override
   String botRatingLabel(int rating) {
     return '~$rating rapid';
   }
@@ -179,11 +173,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onlineYouLabel => 'You';
 
   @override
-  String onlineOpponentThinking(String name) {
-    return '$name thinking...';
-  }
-
-  @override
   String get onlineOpponentsTurn => 'Opponent\'s turn';
 
   @override
@@ -223,12 +212,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onlineResignButton => 'Resign';
-
-  @override
-  String get onlinePlayAgain => 'Play Again';
-
-  @override
-  String get onlineYourTurnBadge => 'Your turn';
 
   @override
   String get onlineOpponentLabel => 'Opponent';
@@ -274,9 +257,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String playHumanTimeMinutes(String label) {
     return '$label minutes';
   }
-
-  @override
-  String get playHumanDescFast => 'Super fast! Think quickly ⚡';
 
   @override
   String get playHumanDescMedium => 'Fast and fun 🏃';
@@ -355,21 +335,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get puzzleViewingSolution => 'Showing solution...';
-
-  @override
-  String get puzzleButtonDaily => 'Daily';
-
-  @override
-  String get puzzleButtonNext => 'Next Puzzle';
-
-  @override
-  String get puzzleButtonLoad => 'Load Daily Puzzle';
-
-  @override
-  String get puzzleButtonRandom => 'Random Puzzle';
-
-  @override
-  String get puzzleReadyText => 'Ready to solve puzzles?';
 
   @override
   String get puzzleSetupTitle => 'Solve Puzzles';
