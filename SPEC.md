@@ -650,10 +650,11 @@ Compact single-screen layout with all settings visible without scrolling:
 - Header with arrow_back IconButton (always shown, returns to setup) + puzzle title
 - Subtitle adapts to mode: solving / viewing solution / review
 - Chessboard with hint circle shapes overlay
-- **Stars & streak bar** (`_StarsBar`): shown beneath the board when stars > 0 or streak > 0
-  - Stars: 🌟 icons for each group of 5, ⭐ for remainder, count in gold text
+- **Stars & streak bar** (`_StarsBar`): always shown beneath the board
+  - Stars: 🌟 icons for each group of 5, ⭐ for remainder (or single ⭐ when 0), count in gold text
   - Streak ≥ 1: `🔥 X in a row`
-  - Streak = 0 (but stars > 0): `💪 Let's start a streak!` (encouraging, no negative display)
+  - Streak = 0: `💪 Let's start a streak!` (encouraging, no negative display)
+  - Both counters reset daily; bar still visible at 0 to encourage play
 - Result banner (correct/wrong/solved) with kid-friendly text and emoji
 - Toolbar during solving: Hint (lightbulb icon) + View Solution (eye icon) buttons
 - Move navigation bar during review: |◁ ◁ ▷ ▷| buttons
@@ -888,14 +889,21 @@ PIN and time enforcement are stubbed — UI placeholders exist in `SettingsScree
 ## 19. Styles
 
 ### Colors (lib/src/styles/colors.dart)
+
+Two color palettes defined:
+
+**`ChessPalsColors`** (classic green, default):
 ```dart
-abstract class ChessPalsColors {
-  static const primary = Color(0xFF4CAF50);       // Forest green
-  static const primaryDark = Color(0xFF388E3C);
-  static const accent = Color(0xFFFF9800);         // Warm orange
-  static const surface = Color(0xFFF9FBF2);        // Off-white
-  static const onPrimary = Colors.white;
-}
+primary = Color(0xFF4CAF50);       // Forest green
+surface = Color(0xFFF9FBF2);        // Off-white
+accent  = Color(0xFFFF9800);        // Warm orange
+```
+
+**`WatercolorColors`** (derived from avatar illustrations):
+```dart
+primary = Color(0xFF8B6B4A);       // Warm brown (avatar borders)
+surface = Color(0xFFF5ECD7);        // Parchment cream
+accent  = Color(0xFFD4A843);        // Warm gold/honey
 ```
 
 ### Typography (lib/src/styles/typography.dart)
@@ -903,7 +911,9 @@ abstract class ChessPalsColors {
 - Weights used: 400 (regular), 600 (semibold), 700 (bold), 800 (extrabold)
 
 ### Theme (lib/src/styles/theme.dart)
-- `ChessPalsTheme.light` → `ThemeData` with Material 3, `ColorScheme.fromSeed(seedColor: ChessPalsColors.primary)`, Nunito text theme
+- `const bool useWatercolorTheme` toggle at top of file (default `false` = classic green)
+- `ChessPalsTheme.light` selects theme based on the toggle
+- Both themes share a `_buildTheme()` builder with Material 3 `ColorScheme.fromSeed`
 
 ---
 

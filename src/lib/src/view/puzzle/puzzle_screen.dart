@@ -453,7 +453,6 @@ class _StarsBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final stars = ref.watch(puzzleStarsProvider);
-    if (stars.stars == 0 && stars.streak == 0) return const SizedBox.shrink();
 
     final bigStars = stars.stars ~/ 5;
     final smallStars = stars.stars % 5;
@@ -463,34 +462,35 @@ class _StarsBar extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Star icons + count
-          if (stars.stars > 0) ...[
+          // Star icons + count (always shown)
+          if (bigStars > 0)
             ...List.generate(
               bigStars.clamp(0, 6),
               (_) => const Text('🌟', style: TextStyle(fontSize: 20)),
             ),
+          if (smallStars > 0)
             ...List.generate(
               smallStars.clamp(0, 4),
               (_) => const Text('⭐', style: TextStyle(fontSize: 16)),
             ),
-            const SizedBox(width: 4),
-            Text(
-              '${stars.stars}',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: Colors.amber[800],
-                  ),
-            ),
-          ],
+          if (stars.stars == 0)
+            const Text('⭐', style: TextStyle(fontSize: 16)),
+          const SizedBox(width: 4),
+          Text(
+            '${stars.stars}',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: Colors.amber[800],
+                ),
+          ),
           // Separator
-          if (stars.stars > 0)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                '|',
-                style: TextStyle(color: Colors.grey[400], fontSize: 18),
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              '|',
+              style: TextStyle(color: Colors.grey[400], fontSize: 18),
             ),
+          ),
           // Streak or encouragement
           if (stars.streak >= 1) ...[
             const Text('🔥', style: TextStyle(fontSize: 18)),
