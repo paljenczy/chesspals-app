@@ -141,7 +141,8 @@ src/
         │   ├── bot/
         │   │   └── bot_character.dart
         │   ├── game/
-        │   │   └── bot_game_controller.dart
+        │   │   ├── bot_game_controller.dart
+        │   │   └── material_diff.dart         # material difference calculation
         │   ├── matchmaking/
         │   │   └── matchmaking_controller.dart
         │   ├── parental/
@@ -170,7 +171,8 @@ src/
             │   ├── online_game_screen.dart
             │   ├── bot_reaction.dart       # BotReaction enum, detectReaction(), BotCharacterAvatar
             │   ├── game_over_dialog.dart   # shared game-over dialog with analyze option
-            │   └── analysis_screen.dart    # post-game move-by-move replay
+            │   ├── analysis_screen.dart    # post-game move-by-move replay
+            │   └── material_diff_display.dart  # reusable captured-pieces widget
             ├── home/
             │   └── home_screen.dart
             ├── kid/
@@ -393,7 +395,9 @@ Run: `python3 tools/generate_animal_svgs.py`
 - Status banner: "Your turn" / "Bot is thinking..." with spinner
 - **Bot avatar reactions**: `BotCharacterAvatar` with animated emotional expressions triggered by game events (captures, checks, promotions)
 - **Reaction audio**: plays corresponding WAV sound for each reaction
-- **Player row**: below the board — `KidAvatarWidget` (tappable to cycle), username, rapid rating
+- **Player row**: below the board — `KidAvatarWidget` (tappable to cycle), username, rapid rating, **material difference display**
+- **Bot row**: above the board — bot avatar, localized name, difficulty, **material difference display**
+- **Material difference**: both rows show captured piece icons (♕♖♗♘♙ in grey) and `+N` score when one side has a material advantage, calculated from current board position via `MaterialDiff.fromPosition()`
 - Buttons: Resign (with confirmation dialog), New Game
 - **Resign confirmation**: shows AlertDialog ("Resign?" / "Are you sure you want to give up this game?") before resigning
 - **Game over dialog**: shows result with "Go Home" and "Analyze" options; "Analyze" navigates to `/analysis`
@@ -406,6 +410,24 @@ Run: `python3 tools/generate_animal_svgs.py`
 - `resign()` / `newGame()`
 - **Bot move delay**: 3 seconds before the bot responds (gives kids time to see their move)
 - Bot AI: simple heuristic (pool-size shrinks with higher level), configurable by level 1–8
+
+### Material Difference (lib/src/model/game/material_diff.dart)
+
+Calculates per-side piece surplus and material score from a `dartchess` `Position`.
+
+**`MaterialDiff.fromPosition(Position)`**: uses `position.board.materialCount(side)` to count pieces per role. For each non-king role, computes the difference (white count − black count). Positive diff → white surplus, negative → black surplus.
+
+**Piece values**: queen=9, rook=5, bishop=3, knight=3, pawn=1, king=0.
+
+**`MaterialDiffSide`**: `pieces` (Map<Role, int> of surplus counts, only roles with count > 0), `score` (net material advantage, 0 if behind or equal), `isEmpty` (true when no advantage).
+
+**Display order**: queen → rook → bishop → knight → pawn.
+
+### Material Difference Display (lib/src/view/game/material_diff_display.dart)
+
+Reusable widget shared by both bot and online game screens. Shows captured piece icons as Unicode chess symbols (♕♖♗♘♙) in grey (`Colors.grey[600]`, 13px), each repeated per surplus count. Appends `+N` score text when score > 0. Returns `SizedBox.shrink()` when no advantage.
+
+Uses the white Unicode chess glyph set (U+2655–U+2659) rather than the black set (U+265B–U+265F) because U+265F (♟) renders as a color emoji on Android, causing inconsistent sizing.
 
 ---
 
@@ -425,10 +447,10 @@ Run: `python3 tools/generate_animal_svgs.py`
 
 **Layout** (top to bottom):
 1. `AppBar` with back button + draw offer icon (handshake, shown after ≥2 half-moves) + resign flag icon
-2. Opponent row: 👤 emoji (or `BotCharacterAvatar` for bot games), name, rating, **opponent clock** (trailing)
+2. Opponent row: 👤 emoji (or `BotCharacterAvatar` for bot games), name, rating, **material difference display**, **opponent clock** (trailing)
 3. Draw offer banner (conditional amber bar with Accept/Decline, shown when opponent offers a draw)
 4. `Chessboard` widget (full width minus 16px padding)
-5. Player row: `KidAvatarWidget` (tappable to cycle), username, rating, **player clock** (trailing)
+5. Player row: `KidAvatarWidget` (tappable to cycle), username, rating, **material difference display**, **player clock** (trailing)
 
 **Chess Clocks**:
 - State: `_whiteTimeMs`, `_blackTimeMs` (remaining milliseconds)

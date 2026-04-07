@@ -12,11 +12,13 @@ import '../../../l10n/app_localizations.dart';
 import '../../model/auth/lichess_account.dart';
 import '../../model/bot/bot_character.dart';
 import '../../model/game/bot_game_controller.dart' show toValidMoves;
+import '../../model/game/material_diff.dart';
 import '../../network/lichess_client.dart';
 import '../../service/reaction_audio.dart';
 import '../../utils/bot_l10n.dart';
 import 'bot_reaction.dart';
 import 'game_over_dialog.dart';
+import 'material_diff_display.dart';
 
 /// Online game screen — streams a Lichess board API game and handles moves.
 class OnlineGameScreen extends ConsumerStatefulWidget {
@@ -562,6 +564,8 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   Widget _buildOpponentRow(bool isMyTurn, AppLocalizations l, int timeMs, bool active) {
     final character = _character;
     final thinking = !_gameOver && !isMyTurn;
+    final diff = MaterialDiff.fromPosition(_position);
+    final opponentSide = _playerSide == Side.white ? diff.black : diff.white;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -583,7 +587,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                 shape: BoxShape.circle,
               ),
               child: const Center(
-                child: Text('👤', style: TextStyle(fontSize: 28)),
+                child: Text('\u{1F464}', style: TextStyle(fontSize: 28)),
               ),
             ),
           const SizedBox(width: 12),
@@ -605,6 +609,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                           : '',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
+                MaterialDiffDisplay(side: opponentSide),
               ],
             ),
           ),
@@ -619,6 +624,8 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     final avatarIndex = account?.avatarIndex ?? 0;
     final username = account?.username ?? l.onlineYouLabel;
     final rapid = account?.rapidRating;
+    final diff = MaterialDiff.fromPosition(_position);
+    final playerSide = _playerSide == Side.white ? diff.white : diff.black;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -642,6 +649,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                   rapid != null ? '$rapid ${l.onlineRapidSuffix}' : '',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
+                MaterialDiffDisplay(side: playerSide),
               ],
             ),
           ),

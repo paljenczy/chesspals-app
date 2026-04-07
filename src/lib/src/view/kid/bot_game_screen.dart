@@ -11,8 +11,10 @@ import '../../model/bot/bot_character.dart';
 import '../../model/game/bot_game_controller.dart';
 import '../../service/reaction_audio.dart';
 import '../../utils/bot_l10n.dart';
+import '../../model/game/material_diff.dart';
 import '../game/bot_reaction.dart';
 import '../game/game_over_dialog.dart';
+import '../game/material_diff_display.dart';
 
 /// Chess board screen for bot play.
 /// The [level] (1–8) maps to a Stockfish difficulty, displayed as [BotCharacter].
@@ -203,7 +205,7 @@ class _GameBody extends ConsumerWidget {
         return Column(
           children: [
             // Bot character row
-            _BotRow(character: character, avatarKey: avatarKey, isThinking: isThinking),
+            _BotRow(character: character, avatarKey: avatarKey, isThinking: isThinking, position: state.position),
 
             // Status banner (only during play)
             _StatusBanner(state: state),
@@ -237,7 +239,7 @@ class _GameBody extends ConsumerWidget {
             ),
 
             // Player row
-            _PlayerRow(),
+            _PlayerRow(position: state.position),
 
             const SizedBox(height: 8),
 
@@ -294,15 +296,18 @@ class _BotRow extends StatelessWidget {
     required this.character,
     required this.avatarKey,
     required this.isThinking,
+    required this.position,
   });
 
   final BotCharacter character;
   final GlobalKey<BotCharacterAvatarState> avatarKey;
   final bool isThinking;
+  final Position position;
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final diff = MaterialDiff.fromPosition(position);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -324,6 +329,7 @@ class _BotRow extends StatelessWidget {
                 localizedBotDifficulty(l, character),
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
+              MaterialDiffDisplay(side: diff.black),
             ],
           ),
           if (isThinking) ...[
@@ -341,6 +347,10 @@ class _BotRow extends StatelessWidget {
 }
 
 class _PlayerRow extends ConsumerWidget {
+  const _PlayerRow({required this.position});
+
+  final Position position;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
@@ -348,6 +358,7 @@ class _PlayerRow extends ConsumerWidget {
     final avatarIndex = account?.avatarIndex ?? 0;
     final username = account?.username ?? l.onlineYouLabel;
     final rapid = account?.rapidRating;
+    final diff = MaterialDiff.fromPosition(position);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -370,6 +381,7 @@ class _PlayerRow extends ConsumerWidget {
                 rapid != null ? '$rapid ${l.onlineRapidSuffix}' : '',
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
+              MaterialDiffDisplay(side: diff.white),
             ],
           ),
         ],
