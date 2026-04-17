@@ -242,6 +242,20 @@ class AppLocalizationsHu extends AppLocalizations {
   String get onlineDrawDecline => 'Elutasítom';
 
   @override
+  String onlineOpponentGoneCountdown(int seconds) {
+    return 'Az ellenfél kilépett. Győzelem igénylése $seconds mp múlva';
+  }
+
+  @override
+  String get onlineOpponentGone => 'Az ellenfél elhagyta a játékot';
+
+  @override
+  String get onlineClaimVictory => 'Győzelem igénylése';
+
+  @override
+  String get onlineOfferDrawButton => 'Döntetlen ajánlása';
+
+  @override
   String get playHumanTitle => 'Játssz egy valódi személlyel';
 
   @override
@@ -462,6 +476,18 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get settingsLanguageHungarian => 'Magyar';
+
+  @override
+  String get settingsLogout => 'Kijelentkezés';
+
+  @override
+  String get settingsLogoutConfirm => 'Biztosan ki akarsz jelentkezni?';
+
+  @override
+  String get settingsLogoutCancel => 'Mégse';
+
+  @override
+  String get settingsLogoutButton => 'Kijelentkezés';
 
   @override
   String get settingsSectionProfile => 'Profil';

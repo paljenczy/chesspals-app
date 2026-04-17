@@ -87,6 +87,10 @@
   "onlineDrawOfferReceived": "Az ellenfeled döntetlent ajánl",
   "onlineDrawAccept": "Elfogadom",
   "onlineDrawDecline": "Elutasítom",
+  "onlineOpponentGoneCountdown": "Az ellenfél kilépett. Győzelem igénylése {seconds} mp múlva",
+  "onlineOpponentGone": "Az ellenfél elhagyta a játékot",
+  "onlineClaimVictory": "Győzelem igénylése",
+  "onlineOfferDrawButton": "Döntetlen ajánlása",
 
   "playHumanTitle": "Játssz egy valódi személlyel",
   "playHumanYourRating": "Gyors értékelésed: {rating} ⚡",
@@ -162,6 +166,11 @@
   "settingsLanguageSub": "English / Magyar",
   "settingsLanguageEnglish": "English",
   "settingsLanguageHungarian": "Magyar",
+
+  "settingsLogout": "Kijelentkezés",
+  "settingsLogoutConfirm": "Biztosan ki akarsz jelentkezni?",
+  "settingsLogoutCancel": "Mégse",
+  "settingsLogoutButton": "Kijelentkezés",
 
   "settingsSectionProfile": "Profil",
   "settingsAvatar": "Válassz avatárt",

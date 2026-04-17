@@ -24,16 +24,18 @@ import '../l10n/app_localizations.dart';
 // GoRouter needs a listenable to re-evaluate redirects when auth changes.
 GoRouter _buildRouter(WidgetRef ref) {
   return GoRouter(
-    initialLocation: '/bot',
+    initialLocation: '/login',
     redirect: (context, state) async {
-      // Skip redirect for login screen and analysis (passed via extra)
-      if (state.matchedLocation == '/login') return null;
       if (state.matchedLocation == '/analysis') return null;
       final account = ref.read(accountProvider);
       // Still loading — don't redirect yet
       if (account.isLoading) return null;
-      // Not logged in → login screen
-      if (account.value == null) return '/login';
+      final loggedIn = account.value != null;
+      final onLogin = state.matchedLocation == '/login';
+      // Not logged in → force login screen
+      if (!loggedIn && !onLogin) return '/login';
+      // Logged in but on login screen → go to home
+      if (loggedIn && onLogin) return '/bot';
       return null;
     },
     routes: [

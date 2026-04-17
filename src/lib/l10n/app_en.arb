@@ -102,6 +102,15 @@
   "onlineDrawOfferReceived": "Your opponent offers a draw",
   "onlineDrawAccept": "Accept",
   "onlineDrawDecline": "Decline",
+  "onlineOpponentGoneCountdown": "Opponent left. You can claim victory in {seconds}s",
+  "@onlineOpponentGoneCountdown": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "onlineOpponentGone": "Opponent left the game",
+  "onlineClaimVictory": "Claim Victory",
+  "onlineOfferDrawButton": "Offer Draw",
 
   "playHumanTitle": "Play a Real Person",
   "playHumanYourRating": "Your rapid rating: {rating} ⚡",
@@ -197,6 +206,11 @@
   "settingsLanguageSub": "English / Magyar",
   "settingsLanguageEnglish": "English",
   "settingsLanguageHungarian": "Magyar",
+
+  "settingsLogout": "Log out",
+  "settingsLogoutConfirm": "Are you sure you want to log out?",
+  "settingsLogoutCancel": "Cancel",
+  "settingsLogoutButton": "Log out",
 
   "settingsSectionProfile": "Profile",
   "settingsAvatar": "Choose Avatar",

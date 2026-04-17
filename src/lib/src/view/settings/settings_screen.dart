@@ -76,6 +76,39 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l.settingsPrivacyPolicy),
             onTap: () {/* TODO: show privacy policy */},
           ),
+          if (account != null) ...[
+            const Divider(),
+            ListTile(
+              leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+              title: Text(
+                l.settingsLogout,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+              onTap: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: Text(l.settingsLogout),
+                    content: Text(l.settingsLogoutConfirm),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: Text(l.settingsLogoutCancel),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: Text(l.settingsLogoutButton),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirmed == true && context.mounted) {
+                  await ref.read(accountProvider.notifier).logout();
+                  if (context.mounted) context.go('/login');
+                }
+              },
+            ),
+          ],
         ],
       ),
     );

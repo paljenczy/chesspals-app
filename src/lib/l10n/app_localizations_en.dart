@@ -243,6 +243,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onlineDrawDecline => 'Decline';
 
   @override
+  String onlineOpponentGoneCountdown(int seconds) {
+    return 'Opponent left. You can claim victory in ${seconds}s';
+  }
+
+  @override
+  String get onlineOpponentGone => 'Opponent left the game';
+
+  @override
+  String get onlineClaimVictory => 'Claim Victory';
+
+  @override
+  String get onlineOfferDrawButton => 'Offer Draw';
+
+  @override
   String get playHumanTitle => 'Play a Real Person';
 
   @override
@@ -460,6 +474,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsLanguageHungarian => 'Magyar';
+
+  @override
+  String get settingsLogout => 'Log out';
+
+  @override
+  String get settingsLogoutConfirm => 'Are you sure you want to log out?';
+
+  @override
+  String get settingsLogoutCancel => 'Cancel';
+
+  @override
+  String get settingsLogoutButton => 'Log out';
 
   @override
   String get settingsSectionProfile => 'Profile';

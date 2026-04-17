@@ -530,6 +530,30 @@ abstract class AppLocalizations {
   /// **'Decline'**
   String get onlineDrawDecline;
 
+  /// No description provided for @onlineOpponentGoneCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent left. You can claim victory in {seconds}s'**
+  String onlineOpponentGoneCountdown(int seconds);
+
+  /// No description provided for @onlineOpponentGone.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent left the game'**
+  String get onlineOpponentGone;
+
+  /// No description provided for @onlineClaimVictory.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim Victory'**
+  String get onlineClaimVictory;
+
+  /// No description provided for @onlineOfferDrawButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer Draw'**
+  String get onlineOfferDrawButton;
+
   /// No description provided for @playHumanTitle.
   ///
   /// In en, this message translates to:
@@ -937,6 +961,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Magyar'**
   String get settingsLanguageHungarian;
+
+  /// No description provided for @settingsLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get settingsLogout;
+
+  /// No description provided for @settingsLogoutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out?'**
+  String get settingsLogoutConfirm;
+
+  /// No description provided for @settingsLogoutCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsLogoutCancel;
+
+  /// No description provided for @settingsLogoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get settingsLogoutButton;
 
   /// No description provided for @settingsSectionProfile.
   ///
