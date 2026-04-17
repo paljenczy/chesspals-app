@@ -57,11 +57,13 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^4.0.3
   mocktail: ^1.0.0
+  flutter_launcher_icons: ^0.14.3
 
 flutter:
   uses-material-design: true
   generate: true
   assets:
+    - assets/icon/
     - assets/avatars/
     - assets/kid_avatars/
     - assets/bot_avatars/
@@ -74,3 +76,13 @@ flutter:
     - assets/bot_avatars/giraffe/
     - assets/bot_avatars/tiger/
     - assets/sounds/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  web:
+    generate: true
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#4CAF50"
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
