@@ -63,16 +63,24 @@ nullable-getter: false
 ```
 
 ### Dev token injection
-Pass `--dart-define=LICHESS_TOKEN=lip_xxx` to `flutter run` to pre-seed the OAuth token for development. The `main.dart` writes this to `FlutterSecureStorage` at startup. A `run.sh` script reads from a gitignored `.env` file:
+Pass `--dart-define=LICHESS_TOKEN=lip_xxx` to `flutter run` to pre-seed the OAuth token for development. The `main.dart` writes this to `FlutterSecureStorage` at startup. A `run.sh` script reads from a gitignored `.env` file and injects all keys as `--dart-define` flags.
+
+### run.sh — development launcher
+Defaults to **Chrome with Wasm** for the fastest feedback loop (sub-second hot-reload). Also starts `build_runner watch` in the background so Freezed/Riverpod codegen runs automatically on save.
+
 ```bash
-# .env
-LICHESS_TOKEN=your_token_here
+./run.sh                      # Chrome + Wasm (default, fastest)
+./run.sh --android            # Android emulator (emulator-5554)
+./run.sh --ios                # iOS Simulator (iPhone 16)
+./run.sh --device <id>        # Specific device
+./run.sh --no-watch           # Skip build_runner watch
+./run.sh --no-wasm            # Disable Wasm (use JS backend)
+./run.sh --release            # Release build (or any flutter run flag)
 ```
-```bash
-# run.sh
-source .env
-flutter run -d <device> --dart-define=LICHESS_TOKEN=$LICHESS_TOKEN
-```
+
+Wasm is auto-enabled for Chrome because `dartchess` uses 64-bit integer bitboards that JavaScript's `number` type cannot represent. The `FLUTTER_DEVICE` env var overrides the default device.
+
+Once running, press **`r`** for hot-reload, **`R`** for hot-restart, **`q`** to quit.
 
 ---
 
@@ -105,7 +113,7 @@ src/
 ├── .env                          # gitignored — LICHESS_TOKEN=lip_...
 ├── .env.example                  # template with placeholder
 ├── .gitignore                    # includes .env
-├── run.sh                        # reads .env, runs flutter with --dart-define
+├── run.sh                        # dev launcher: Chrome+Wasm default, build_runner watch
 ├── pubspec.yaml
 ├── l10n.yaml
 ├── assets/
