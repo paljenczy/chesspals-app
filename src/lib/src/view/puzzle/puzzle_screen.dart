@@ -318,7 +318,7 @@ class _PuzzleView extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final controller = ref.read(puzzleControllerProvider.notifier);
     final boardSize =
-        MediaQuery.of(context).size.width.clamp(200.0, 500.0).toDouble();
+        MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
@@ -340,7 +340,7 @@ class _PuzzleView extends ConsumerWidget {
                   child: Text(
                     state.isDaily
                         ? l.puzzleDailyTitle
-                        : l.puzzleTitle(state.puzzle.id),
+                        : l.puzzleSetupTitle,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                         ),

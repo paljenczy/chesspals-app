@@ -46,7 +46,7 @@ class KidBotSelectScreen extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 0.82,
+                  childAspectRatio: 0.72,
                 ),
                 itemCount: BotCharacter.values.length,
                 itemBuilder: (context, index) => _BotCard(
@@ -91,8 +91,8 @@ class _BotCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               character.hasPngEmotions
-                  ? Image.asset(character.emotionAsset(null), width: 72, height: 72, fit: BoxFit.contain)
-                  : SvgPicture.asset(character.emotionAsset(null), width: 72, height: 72),
+                  ? Image.asset(character.emotionAsset(null), width: 100, height: 100, fit: BoxFit.contain)
+                  : SvgPicture.asset(character.emotionAsset(null), width: 100, height: 100),
               const SizedBox(height: 6),
               Text(
                 localizedBotName(l, character),

@@ -60,11 +60,14 @@ class _BotGameScreenState extends ConsumerState<BotGameScreen> {
     _dialogShown = true;
 
     final l = AppLocalizations.of(context);
+    const characters = BotCharacter.values;
+    final character = characters[widget.characterIndex.clamp(0, characters.length - 1)];
+    final firstName = localizedBotName(l, character).split(' ').first;
     final (text, color) = switch (state.status) {
       GameStatus.whiteWins => (l.botGameStatusYouWon, Colors.green[800]!),
-      GameStatus.blackWins => (l.botGameStatusBotWins, Colors.red[700]!),
+      GameStatus.blackWins => (l.botGameStatusBotWins(firstName), Colors.red[700]!),
       GameStatus.draw => (l.botGameStatusDraw, Colors.blue[700]!),
-      GameStatus.resigned => (l.botGameStatusBotWins, Colors.red[700]!),
+      GameStatus.resigned => (l.botGameStatusBotWins(firstName), Colors.red[700]!),
       _ => ('', Colors.grey),
     };
 
@@ -134,8 +137,8 @@ class _BotGameScreenState extends ConsumerState<BotGameScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             character.hasPngEmotions
-                ? Image.asset(character.emotionAsset(null), width: 36, height: 36, fit: BoxFit.contain)
-                : SvgPicture.asset(character.emotionAsset(null), width: 36, height: 36),
+                ? Image.asset(character.emotionAsset(null), width: 44, height: 44, fit: BoxFit.contain)
+                : SvgPicture.asset(character.emotionAsset(null), width: 44, height: 44),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
@@ -196,8 +199,8 @@ class _GameBody extends ConsumerWidget {
       builder: (context, constraints) {
         // Reserve space for rows around the board, then give the rest to the board
         const chromHeight = 200.0; // bot row + status + player row + buttons + padding
-        final maxBoardFromWidth = constraints.maxWidth.clamp(200.0, 500.0);
-        final maxBoardFromHeight = (constraints.maxHeight - chromHeight).clamp(200.0, 500.0);
+        final maxBoardFromWidth = constraints.maxWidth;
+        final maxBoardFromHeight = (constraints.maxHeight - chromHeight).clamp(200.0, double.infinity);
         final boardSize = maxBoardFromWidth < maxBoardFromHeight
             ? maxBoardFromWidth
             : maxBoardFromHeight;
@@ -208,7 +211,7 @@ class _GameBody extends ConsumerWidget {
             _BotRow(character: character, avatarKey: avatarKey, isThinking: isThinking, position: state.position),
 
             // Status banner (only during play)
-            _StatusBanner(state: state),
+            _StatusBanner(state: state, character: character),
 
             // Board
             Center(
@@ -315,6 +318,7 @@ class _BotRow extends StatelessWidget {
           BotCharacterAvatar(
             key: avatarKey,
             character: character,
+            size: 80,
             isThinking: isThinking,
           ),
           const SizedBox(width: 12),
@@ -366,7 +370,7 @@ class _PlayerRow extends ConsumerWidget {
         children: [
           KidAvatarWidget(
             avatarIndex: avatarIndex,
-            size: 64,
+            size: 80,
             onTap: () => ref.read(accountProvider.notifier).cycleAvatar(),
           ),
           const SizedBox(width: 12),
@@ -391,8 +395,9 @@ class _PlayerRow extends ConsumerWidget {
 }
 
 class _StatusBanner extends StatelessWidget {
-  const _StatusBanner({required this.state});
+  const _StatusBanner({required this.state, required this.character});
   final BotGameState state;
+  final BotCharacter character;
 
   @override
   Widget build(BuildContext context) {
@@ -400,9 +405,10 @@ class _StatusBanner extends StatelessWidget {
     // Only show banner during active play
     if (state.status != GameStatus.playing) return const SizedBox.shrink();
 
+    final firstName = localizedBotName(l, character).split(' ').first;
     final (text, color) = state.sideToMove == Side.white
         ? (l.botGameStatusYourTurn, Colors.green[700]!)
-        : (l.botGameStatusBotThinking, Colors.orange[700]!);
+        : (l.botThinking(firstName), Colors.orange[700]!);
 
     return Container(
       width: double.infinity,

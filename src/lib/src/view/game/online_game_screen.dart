@@ -65,6 +65,10 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   bool _drawOfferedByMe = false;
   bool _opponentOfferedDraw = false;
 
+  // ─── Opponent gone state ───────────────────────────────────────────────────
+  bool _opponentGone = false;
+  int _claimWinInSeconds = 0;
+
   // ─── Opponent info ─────────────────────────────────────────────────────────
   String? _opponentName;
   int? _opponentRating;
@@ -131,6 +135,12 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       if (state != null) _applyState(state);
     } else if (type == 'gameState') {
       _applyState(event);
+    } else if (type == 'opponentGone') {
+      final gone = event['gone'] as bool? ?? false;
+      setState(() {
+        _opponentGone = gone;
+        _claimWinInSeconds = gone ? (event['claimWinInSeconds'] as int? ?? 0) : 0;
+      });
     }
   }
 
@@ -316,6 +326,12 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     } catch (_) {}
   }
 
+  Future<void> _claimVictory() async {
+    try {
+      await _client.claimVictory(widget.gameId);
+    } catch (_) {}
+  }
+
   // ─── Clock timer ───────────────────────────────────────────────────────────
 
   void _restartClockTimer() {
@@ -478,11 +494,17 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                         onDecline: _declineDraw,
                       ),
 
+                    // Opponent gone banner
+                    if (_opponentGone && !_gameOver)
+                      _OpponentGoneBanner(
+                        claimWinInSeconds: _claimWinInSeconds,
+                        onClaimVictory: _claimVictory,
+                        onOfferDraw: _offerDraw,
+                      ),
+
                     // Board
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Chessboard(
-                        size: MediaQuery.of(context).size.width - 16,
+                    Chessboard(
+                        size: MediaQuery.of(context).size.width,
                         fen: _position.fen,
                         orientation: _playerSide,
                         lastMove: _lastMove != null
@@ -507,7 +529,6 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                           pieceAssets: PieceSet.cburnett.assets,
                         ),
                       ),
-                    ),
 
                     // Player row with clock
                     _buildPlayerRow(l, playerTimeMs, playerActive),
@@ -795,6 +816,81 @@ class _DrawOfferBanner extends StatelessWidget {
             ),
             child: Text(l.onlineDrawAccept),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OpponentGoneBanner extends StatelessWidget {
+  const _OpponentGoneBanner({
+    required this.claimWinInSeconds,
+    required this.onClaimVictory,
+    required this.onOfferDraw,
+  });
+
+  final int claimWinInSeconds;
+  final VoidCallback onClaimVictory;
+  final VoidCallback onOfferDraw;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final canClaim = claimWinInSeconds <= 0;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.orange[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange[400]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.wifi_off, color: Colors.orange[800], size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  canClaim
+                      ? l.onlineOpponentGone
+                      : l.onlineOpponentGoneCountdown(claimWinInSeconds),
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+          if (canClaim) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                OutlinedButton(
+                  onPressed: onOfferDraw,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(l.onlineOfferDrawButton),
+                ),
+                const SizedBox(width: 8),
+                FilledButton(
+                  onPressed: onClaimVictory,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(l.onlineClaimVictory),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

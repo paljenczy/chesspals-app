@@ -61,7 +61,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
     final position = _positions[_currentPly];
     final lastMove = _lastMoves[_currentPly];
     final boardSize =
-        MediaQuery.of(context).size.width.clamp(200.0, 500.0).toDouble();
+        MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(

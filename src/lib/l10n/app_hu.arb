@@ -56,7 +56,12 @@
   "botGameStatusYourTurn": "Te jössz ♟",
   "botGameStatusBotThinking": "A bot gondolkodik...",
   "botGameStatusYouWon": "Nyertél! 🎉",
-  "botGameStatusBotWins": "A bot nyert! Próbáld újra 💪",
+  "botGameStatusBotWins": "{name} nyert! Próbáld újra 💪",
+  "@botGameStatusBotWins": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "botGameStatusDraw": "Döntetlen! 🤝",
   "botGameButtonResign": "Feladás",
   "botGameButtonNewGame": "Új játék",

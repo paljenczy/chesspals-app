@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 class LichessOAuth {
   static const _clientId = 'chesspals';
   static const _redirectUri = 'com.chesspals.chesspals://oauth-callback';
-  static const _scope = 'board:play';
+  static const _scope = 'board:play puzzle:read';
   static const _authUrl = 'https://lichess.org/oauth';
   static const _tokenUrl = 'https://lichess.org/api/token';
 

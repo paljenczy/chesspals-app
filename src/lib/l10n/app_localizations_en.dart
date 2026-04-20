@@ -149,7 +149,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get botGameStatusYouWon => 'You won! 🎉';
 
   @override
-  String get botGameStatusBotWins => 'Bot wins! Try again 💪';
+  String botGameStatusBotWins(String name) {
+    return '$name wins! Try again 💪';
+  }
 
   @override
   String get botGameStatusDraw => 'It\'s a draw! 🤝';

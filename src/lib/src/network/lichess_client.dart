@@ -41,8 +41,13 @@ class LichessClient {
     final token = await _token;
     return {
       if (token != null) 'Authorization': 'Bearer $token',
-      'Content-Type': 'application/x-www-form-urlencoded',
     };
+  }
+
+  Future<Map<String, String>> get _authFormHeaders async {
+    final headers = await _authHeaders;
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    return headers;
   }
 
   // ─── Account ───────────────────────────────────────────────────────────────
@@ -140,6 +145,16 @@ class LichessClient {
     _checkStatus(response);
   }
 
+  /// POST /api/board/game/{gameId}/claim-victory — Claim win when opponent abandons.
+  Future<void> claimVictory(String gameId) async {
+    final headers = await _authHeaders;
+    final response = await _httpClient.post(
+      Uri.parse('$_baseUrl/api/board/game/$gameId/claim-victory'),
+      headers: headers,
+    );
+    _checkStatus(response);
+  }
+
   /// POST /api/board/game/{gameId}/abort — abort a game before any moves.
   Future<void> abort(String gameId) async {
     final headers = await _authHeaders;
@@ -193,6 +208,22 @@ class LichessClient {
     if (difficulty != null) params['difficulty'] = difficulty;
     final uri = Uri.parse('$_baseUrl/api/puzzle/batch/$angle').replace(queryParameters: params);
     final response = await _httpClient.get(uri, headers: headers);
+    _checkStatus(response);
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['puzzles'] as List).cast<Map<String, dynamic>>();
+  }
+
+  /// Same as [fetchPuzzleBatch] but without authentication.
+  /// Fallback when the OAuth token lacks puzzle:read scope.
+  Future<List<Map<String, dynamic>>> fetchPuzzleBatchAnonymous(
+    String angle, {
+    int count = 50,
+    String? difficulty,
+  }) async {
+    final params = <String, String>{'nb': count.toString()};
+    if (difficulty != null) params['difficulty'] = difficulty;
+    final uri = Uri.parse('$_baseUrl/api/puzzle/batch/$angle').replace(queryParameters: params);
+    final response = await _httpClient.get(uri);
     _checkStatus(response);
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return (json['puzzles'] as List).cast<Map<String, dynamic>>();

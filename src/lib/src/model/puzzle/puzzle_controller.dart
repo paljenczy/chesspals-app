@@ -113,11 +113,26 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
     try {
       final client = LichessClient();
       final settings = ref.read(puzzleSettingsProvider);
-      final puzzles = await client.fetchPuzzleBatch(
-        settings.theme,
-        count: 5,
-        difficulty: settings.difficulty.apiValue,
-      );
+      List<Map<String, dynamic>> puzzles;
+      try {
+        puzzles = await client.fetchPuzzleBatch(
+          settings.theme,
+          count: 5,
+          difficulty: settings.difficulty.apiValue,
+        );
+      } on LichessAuthException {
+        puzzles = await client.fetchPuzzleBatchAnonymous(
+          settings.theme,
+          count: 5,
+          difficulty: settings.difficulty.apiValue,
+        );
+      } on LichessApiException {
+        puzzles = await client.fetchPuzzleBatchAnonymous(
+          settings.theme,
+          count: 5,
+          difficulty: settings.difficulty.apiValue,
+        );
+      }
       if (puzzles.isEmpty) throw Exception('No puzzles available');
       final puzzle = Puzzle.fromLichessJson(puzzles.first, settings.theme);
       state = AsyncData(_stateForPuzzle(puzzle, isDaily: false));

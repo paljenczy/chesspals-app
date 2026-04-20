@@ -149,7 +149,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get botGameStatusYouWon => 'Nyertél! 🎉';
 
   @override
-  String get botGameStatusBotWins => 'A bot nyert! Próbáld újra 💪';
+  String botGameStatusBotWins(String name) {
+    return '$name nyert! Próbáld újra 💪';
+  }
 
   @override
   String get botGameStatusDraw => 'Döntetlen! 🤝';

@@ -20,25 +20,35 @@ import 'view/settings/settings_screen.dart';
 import 'package:flutter/material.dart' show MaterialApp;
 import '../l10n/app_localizations.dart';
 
-// Redirect to /login if no account loaded yet.
-// GoRouter needs a listenable to re-evaluate redirects when auth changes.
-GoRouter _buildRouter(WidgetRef ref) {
+// Bridges Riverpod's accountProvider to a Listenable so GoRouter
+// re-evaluates its redirect whenever auth state changes.
+class _AuthNotifier extends ChangeNotifier {
+  void notify() => notifyListeners();
+}
+
+GoRouter _buildRouter(WidgetRef ref, ChangeNotifier authNotifier) {
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
+    refreshListenable: authNotifier,
     redirect: (context, state) async {
       if (state.matchedLocation == '/analysis') return null;
       final account = ref.read(accountProvider);
-      // Still loading — don't redirect yet
+      // Still loading — stay on splash
       if (account.isLoading) return null;
       final loggedIn = account.value != null;
-      final onLogin = state.matchedLocation == '/login';
-      // Not logged in → force login screen
-      if (!loggedIn && !onLogin) return '/login';
-      // Logged in but on login screen → go to home
-      if (loggedIn && onLogin) return '/bot';
+      final onAuth = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/splash';
+      // Not logged in → login screen
+      if (!loggedIn && state.matchedLocation != '/login') return '/login';
+      // Logged in but on splash or login → go to home
+      if (loggedIn && onAuth) return '/bot';
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const _SplashScreen(),
+      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
@@ -100,6 +110,7 @@ GoRouter _buildRouter(WidgetRef ref) {
         builder: (context, state) => const SettingsScreen(),
       ),
     ],
+    errorBuilder: (context, state) => const _SplashScreen(),
   );
 }
 
@@ -112,23 +123,24 @@ class ChessPalsApp extends ConsumerStatefulWidget {
 
 class _ChessPalsAppState extends ConsumerState<ChessPalsApp> {
   late final GoRouter _router;
+  final _authNotifier = _AuthNotifier();
 
   @override
   void initState() {
     super.initState();
-    _router = _buildRouter(ref);
+    _router = _buildRouter(ref, _authNotifier);
+    ref.listenManual(accountProvider, (_, __) => _authNotifier.notify());
   }
 
   @override
   void dispose() {
     _router.dispose();
+    _authNotifier.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch account so redirect re-evaluates on login/logout
-    ref.watch(accountProvider);
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
@@ -144,6 +156,24 @@ class _ChessPalsAppState extends ConsumerState<ChessPalsApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: supportedLocales,
+    );
+  }
+}
+
+class _SplashScreen extends StatelessWidget {
+  const _SplashScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const ColoredBox(
+      color: Color(0xFFFFFFFF),
+      child: Center(
+        child: Image(
+          image: AssetImage('assets/icon/app_icon.png'),
+          width: 160,
+          height: 160,
+        ),
+      ),
     );
   }
 }

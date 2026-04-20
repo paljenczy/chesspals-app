@@ -353,8 +353,8 @@ abstract class AppLocalizations {
   /// No description provided for @botGameStatusBotWins.
   ///
   /// In en, this message translates to:
-  /// **'Bot wins! Try again 💪'**
-  String get botGameStatusBotWins;
+  /// **'{name} wins! Try again 💪'**
+  String botGameStatusBotWins(String name);
 
   /// No description provided for @botGameStatusDraw.
   ///

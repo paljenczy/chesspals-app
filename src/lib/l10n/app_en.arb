@@ -66,7 +66,12 @@
   "botGameStatusYourTurn": "Your turn ♟",
   "botGameStatusBotThinking": "Bot is thinking...",
   "botGameStatusYouWon": "You won! 🎉",
-  "botGameStatusBotWins": "Bot wins! Try again 💪",
+  "botGameStatusBotWins": "{name} wins! Try again 💪",
+  "@botGameStatusBotWins": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
   "botGameStatusDraw": "It's a draw! 🤝",
   "botGameButtonResign": "Resign",
   "botGameButtonNewGame": "New Game",
