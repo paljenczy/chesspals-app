@@ -92,6 +92,31 @@ class LichessClient {
     return json['id'] as String;
   }
 
+  /// POST /api/challenge/ai — Challenge the built-in Lichess Stockfish AI.
+  /// [level] is 1–8 (1 = weakest, 8 = strongest).
+  /// Always available, unlike bot accounts which may be offline.
+  Future<String> challengeAi({
+    int level = 1,
+    String color = 'white',
+    int clockLimit = 600,
+    int clockIncrement = 5,
+  }) async {
+    final headers = await _authHeaders;
+    final response = await _httpClient.post(
+      Uri.parse('$_baseUrl/api/challenge/ai'),
+      headers: headers,
+      body: {
+        'level': level.toString(),
+        'color': color,
+        'clock.limit': clockLimit.toString(),
+        'clock.increment': clockIncrement.toString(),
+      },
+    );
+    _checkStatus(response);
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return json['id'] as String;
+  }
+
   /// GET /api/board/game/stream/{gameId} — Stream game events as ndjson.
   Stream<Map<String, dynamic>> streamGame(String gameId) async* {
     final token = await _token;

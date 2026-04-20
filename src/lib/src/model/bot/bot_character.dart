@@ -18,6 +18,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/bee',
     lichessUsername: 'grandQ_AI',
     approxRating: 744,
+    stockfishFallbackLevel: 1,
     description: "I'm just a little bee — I buzz around and make lots of mistakes!",
     difficulty: '⭐ Beginner',
     colorHex: 0xFFFDD835,
@@ -31,6 +32,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/butterfly',
     lichessUsername: 'larryz-alterego',
     approxRating: 884,
+    stockfishFallbackLevel: 1,
     description: "I flutter around the board — I'm still finding my wings!",
     difficulty: '⭐⭐ Explorer',
     colorHex: 0xFFCE93D8,
@@ -44,6 +46,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/hummingbird',
     lichessUsername: 'uSunfish-l0',
     approxRating: 896,
+    stockfishFallbackLevel: 1,
     description: "I move super fast — blink and you'll miss my tricks!",
     difficulty: '⭐⭐ Speedy',
     colorHex: 0xFF80DEEA,
@@ -57,6 +60,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/rabbit',
     lichessUsername: 'EdwardKillick',
     approxRating: 1140,
+    stockfishFallbackLevel: 1,
     description: "I hop around quickly — watch out, I can be tricky!",
     difficulty: '⭐⭐⭐ Tricky',
     colorHex: 0xFFFFCDD2,
@@ -70,6 +74,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/kangaroo',
     lichessUsername: 'AllieTheChessBot',
     approxRating: 1260,
+    stockfishFallbackLevel: 2,
     description: "I learn by watching — I'll leap ahead when you least expect it!",
     difficulty: '⭐⭐⭐ Cunning',
     colorHex: 0xFFD7CCC8,
@@ -83,6 +88,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/deer',
     lichessUsername: 'sargon-1ply',
     approxRating: 1290,
+    stockfishFallbackLevel: 2,
     description: "I play sharp and fast — watch out for my attacks!",
     difficulty: '⭐⭐⭐ Sharp',
     colorHex: 0xFFA1887F,
@@ -96,6 +102,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/giraffe',
     lichessUsername: 'Humaia',
     approxRating: 1376,
+    stockfishFallbackLevel: 2,
     description: "I see the whole board from up high — I play like a real person!",
     difficulty: '⭐⭐⭐⭐ Fierce',
     colorHex: 0xFFFFCC80,
@@ -109,6 +116,7 @@ enum BotCharacter {
     imageDir: 'assets/bot_avatars/tiger',
     lichessUsername: 'bernstein-4ply',
     approxRating: 1408,
+    stockfishFallbackLevel: 3,
     description: "I pounce when you make a mistake — can you outsmart me?",
     difficulty: '⭐⭐⭐⭐ Fierce+',
     colorHex: 0xFFEF6C00,
@@ -122,6 +130,7 @@ enum BotCharacter {
     required this.imageDir,
     required this.lichessUsername,
     required this.approxRating,
+    required this.stockfishFallbackLevel,
     required this.description,
     required this.difficulty,
     required this.colorHex,
@@ -134,6 +143,7 @@ enum BotCharacter {
   final String imageDir;
   final String lichessUsername;
   final int approxRating;
+  final int stockfishFallbackLevel;
   final String description;
   final String difficulty;
   final int colorHex;
@@ -157,7 +167,8 @@ enum BotCharacter {
   bool get hasPngEmotions => true;
 }
 
-/// Challenges a real Lichess bot account.
+/// Challenges a real Lichess bot account, falling back to Stockfish AI
+/// if the bot is unavailable.
 class BotService {
   final LichessClient _client;
 
@@ -165,16 +176,26 @@ class BotService {
 
   Future<String> challengeBot(
     BotCharacter character, {
-    String color = 'random',
+    String color = 'white',
     int clockLimit = 600,
     int clockIncrement = 5,
-  }) {
-    return _client.challengeUser(
-      username: character.lichessUsername,
-      color: color,
-      clockLimit: clockLimit,
-      clockIncrement: clockIncrement,
-      rated: false,
-    );
+  }) async {
+    try {
+      return await _client.challengeUser(
+        username: character.lichessUsername,
+        color: color,
+        clockLimit: clockLimit,
+        clockIncrement: clockIncrement,
+        rated: false,
+      );
+    } catch (_) {
+      // Bot unavailable — fall back to Lichess Stockfish AI
+      return _client.challengeAi(
+        level: character.stockfishFallbackLevel,
+        color: color,
+        clockLimit: clockLimit,
+        clockIncrement: clockIncrement,
+      );
+    }
   }
 }
