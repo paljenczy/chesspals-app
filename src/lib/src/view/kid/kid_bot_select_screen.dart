@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../model/bot/bot_character.dart';
+import '../../network/lichess_client.dart';
 import '../../utils/bot_l10n.dart';
 
 /// 8-animal grid. Tapping starts a bot game at the matching level.
@@ -62,18 +63,41 @@ class KidBotSelectScreen extends StatelessWidget {
   }
 }
 
-class _BotCard extends StatelessWidget {
+class _BotCard extends StatefulWidget {
   const _BotCard({required this.character, required this.index});
   final BotCharacter character;
   final int index;
 
   @override
+  State<_BotCard> createState() => _BotCardState();
+}
+
+class _BotCardState extends State<_BotCard> {
+  bool _loading = false;
+
+  Future<void> _challenge() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+    try {
+      final service = BotService(LichessClient());
+      final gameId = await service.challengeBot(widget.character);
+      if (!mounted) return;
+      context.go('/game/$gameId?side=white&from=bot&char=${widget.index}');
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not challenge bot: $e')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final character = widget.character;
     final cardColor = Color(character.colorHex).withValues(alpha: 0.12);
     final borderColor = Color(character.colorHex).withValues(alpha: 0.5);
-    // Stockfish level 1–8 matches the character index (0-based → 1-based)
-    final level = index + 1;
 
     return Card(
       elevation: 3,
@@ -83,11 +107,13 @@ class _BotCard extends StatelessWidget {
       ),
       color: cardColor,
       child: InkWell(
-        onTap: () => context.go('/bot/game/$level?char=$index'),
+        onTap: _loading ? null : _challenge,
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          child: Column(
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               character.hasPngEmotions
