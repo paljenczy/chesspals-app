@@ -189,9 +189,22 @@ src/
             ├── play/
             │   └── play_human_screen.dart
             ├── puzzle/
-            │   └── puzzle_screen.dart
+            │   ├── puzzle_screen.dart          # setup view only (theme/difficulty selection)
+            │   └── puzzle_solve_screen.dart    # full-screen solving view (outside ShellRoute)
             └── settings/
                 └── settings_screen.dart
+```
+
+### Top-level project files
+```
+chess-kids-app/
+├── .github/workflows/
+│   └── bot-health.yml          # weekly bot health check (GitHub Actions)
+├── tools/
+│   ├── check_bots.py           # bot availability checker (--json, --ci flags)
+│   ├── process_avatars.py      # avatar post-processing (crop, resize, circular mask)
+│   └── generate_animal_svgs.py # SVG emotion variant generator
+└── src/                        # Flutter app (see above)
 ```
 
 ---
@@ -221,6 +234,7 @@ void main() async {
 /bot                 → KidBotSelectScreen  (ShellRoute tab 0)
 /bot/game/:level     → BotGameScreen       (?char=0-7)  [top-level, no shell]
 /puzzles             → PuzzleScreen        (ShellRoute tab 1)
+/puzzles/solve       → PuzzleSolveScreen   [top-level, no shell]
 /play                → PlayHumanScreen     (ShellRoute tab 2)
 /game/:id            → OnlineGameScreen    (?side=white|black|random, ?from=bot|play, ?char=0-7)
 /analysis            → AnalysisScreen      (via extra: {moves, fen, side})
@@ -317,9 +331,11 @@ All calls to `https://lichess.org` with `Authorization: Bearer <token>`.
 |--------|------|----------|---------|
 | `fetchAccount()` | GET | `/api/account` | Returns user JSON |
 | `challengeUser(username, color, clockLimit, clockIncrement, rated)` | POST | `/api/challenge/{username}` | Returns `gameId` string |
+| `challengeAi(level, color, clockLimit, clockIncrement)` | POST | `/api/challenge/ai` | Challenge Lichess Stockfish AI (level 1–8), returns `gameId` |
 | `streamGame(gameId)` | GET | `/api/board/game/stream/{gameId}` | Returns `Stream<Map<String,dynamic>>` of ndjson events |
 | `makeMove(gameId, uci)` | POST | `/api/board/game/{gameId}/move/{uci}` | Submits a move |
 | `resign(gameId)` | POST | `/api/board/game/{gameId}/resign` | Resign |
+| `claimVictory(gameId)` | POST | `/api/board/game/{gameId}/claim-victory` | Claim win when opponent abandons |
 | `abort(gameId)` | POST | `/api/board/game/{gameId}/abort` | Abort (before 2 half-moves) |
 | `offerDraw(gameId)` | POST | `/api/board/game/{gameId}/draw/yes` | Offer or accept a draw |
 | `declineDraw(gameId)` | POST | `/api/board/game/{gameId}/draw/no` | Decline a draw offer |
@@ -341,18 +357,18 @@ All calls to `https://lichess.org` with `Authorization: Bearer <token>`.
 
 8 characters as a Dart `enum` with const constructor fields:
 
-| Enum | English Name | Emoji | Lichess Username | Rating | Difficulty |
-|------|-------------|-------|-----------------|--------|------------|
-| `bee` | Bella the Bee | 🐝 | grandQ_AI | 744 | ⭐ Beginner |
-| `butterfly` | Flutter the Butterfly | 🦋 | larryz-alterego | 884 | ⭐⭐ Explorer |
-| `hummingbird` | Zip the Hummingbird | 🐦 | uSunfish-l0 | 896 | ⭐⭐ Speedy |
-| `rabbit` | Rosie the Rabbit | 🐰 | EdwardKillick | 1140 | ⭐⭐⭐ Tricky |
-| `kangaroo` | Kira the Kangaroo | 🦘 | AllieTheChessBot | 1260 | ⭐⭐⭐ Cunning |
-| `deer` | Dino the Deer | 🦌 | sargon-1ply | 1290 | ⭐⭐⭐ Sharp |
-| `giraffe` | Gabi the Giraffe | 🦒 | Humaia | 1376 | ⭐⭐⭐⭐ Fierce |
-| `tiger` | Tara the Tiger | 🐯 | bernstein-4ply | 1408 | ⭐⭐⭐⭐ Fierce+ |
+| Enum | English Name | Emoji | Lichess Username | Rating | SF Fallback | Difficulty |
+|------|-------------|-------|-----------------|--------|-------------|------------|
+| `bee` | Bella the Bee | 🐝 | grandQ_AI | 744 | Level 1 | ⭐ Beginner |
+| `butterfly` | Flutter the Butterfly | 🦋 | larryz-alterego | 884 | Level 1 | ⭐⭐ Explorer |
+| `hummingbird` | Zip the Hummingbird | 🐦 | uSunfish-l0 | 896 | Level 1 | ⭐⭐ Speedy |
+| `rabbit` | Rosie the Rabbit | 🐰 | EdwardKillick | 1140 | Level 1 | ⭐⭐⭐ Tricky |
+| `kangaroo` | Kira the Kangaroo | 🦘 | bernstein-2ply | 1235 | Level 2 | ⭐⭐⭐ Cunning |
+| `deer` | Dino the Deer | 🦌 | sargon-1ply | 1290 | Level 2 | ⭐⭐⭐ Sharp |
+| `giraffe` | Gabi the Giraffe | 🦒 | Humaia | 1376 | Level 2 | ⭐⭐⭐⭐ Fierce |
+| `tiger` | Tara the Tiger | 🐯 | bernstein-4ply | 1408 | Level 3 | ⭐⭐⭐⭐ Fierce+ |
 
-Fields per character: `id`, `name` (English), `emoji`, `svgAsset`, `imageDir`, `lichessUsername`, `approxRating`, `description` (English), `difficulty` (English), `colorHex` (ARGB int).
+Fields per character: `id`, `name` (English), `emoji`, `svgAsset`, `imageDir`, `lichessUsername`, `approxRating`, `stockfishFallbackLevel`, `description` (English), `difficulty` (English), `colorHex` (ARGB int).
 
 **Color palette** (used for face fill and UI accents):
 | Bot | Color hex | Visual |
@@ -374,7 +390,7 @@ Images are 512×512 circular PNGs with transparent corners, processed from raw A
 
 **Rating display**: Round to nearest 10 (`(rating / 10).round() * 10`).
 
-**`BotService`**: wraps `LichessClient.challengeUser()`. Returns `gameId` string.
+**`BotService`**: wraps `LichessClient`. `challengeBot(character)` first attempts `challengeUser()` to challenge the real Lichess bot. If the bot is unavailable (any error), falls back to `challengeAi(level: character.stockfishFallbackLevel)` using the Lichess built-in Stockfish AI. Returns `gameId` string in both cases.
 
 ### SVG generation
 
@@ -398,7 +414,7 @@ Run: `python3 tools/generate_animal_svgs.py`
 ### BotGameScreen (lib/src/view/kid/bot_game_screen.dart)
 - Route: `/bot/game/:level?char=N` (top-level route, outside ShellRoute — no HomeScreen AppBar or bottom nav)
 - Shows `AppBar` with bot PNG avatar + name
-- **Adaptive board sizing**: uses `LayoutBuilder` to compute board size from available height minus UI chrome (~200px), preventing overflow on smaller screens
+- **Adaptive board sizing**: uses `LayoutBuilder` to compute board size from available height minus UI chrome (~300px), preventing overflow on smaller screens
 - Chessboard: `ChessboardColorScheme.green`, white always at bottom
 - Status banner: "Your turn" / "Bot is thinking..." with spinner
 - **Bot avatar reactions**: `BotCharacterAvatar` with animated emotional expressions triggered by game events (captures, checks, promotions)
@@ -457,7 +473,7 @@ Uses the white Unicode chess glyph set (U+2655–U+2659) rather than the black s
 1. `AppBar` with back button + draw offer icon (handshake, shown after ≥2 half-moves) + resign flag icon
 2. Opponent row: 👤 emoji (or `BotCharacterAvatar` for bot games), name, rating, **material difference display**, **opponent clock** (trailing)
 3. Draw offer banner (conditional amber bar with Accept/Decline, shown when opponent offers a draw)
-4. `Chessboard` widget (full width minus 16px padding)
+4. `Chessboard` widget — height-aware sizing via `LayoutBuilder`: `boardSize = min(maxWidth, maxHeight - 180px)`, clamped to minimum 200px, preventing overflow on tablets and short viewports
 5. Player row: `KidAvatarWidget` (tappable to cycle), username, rating, **material difference display**, **player clock** (trailing)
 
 **Chess Clocks**:
@@ -656,7 +672,9 @@ Key computed properties:
 
 ### PuzzleScreen (lib/src/view/puzzle/puzzle_screen.dart)
 
-**Setup view** (`_PuzzleSetupView`):
+**Setup view only** — this screen shows puzzle configuration (theme, difficulty, rated toggle). When a puzzle loads, `ref.listen(puzzleControllerProvider)` detects the state transition from null to non-null and navigates to `/puzzles/solve`.
+
+**`_PuzzleSetupView`**:
 Compact single-screen layout with all settings visible without scrolling:
 
 - **Screen title**: "Solve Puzzles" (`headlineSmall`, `w800`, centered) — matches bot select and play human screens.
@@ -676,18 +694,23 @@ Compact single-screen layout with all settings visible without scrolling:
 
 5. **"Start Training" button** (ElevatedButton.icon): loads a puzzle using the selected theme + difficulty + rated settings.
 
-**Active puzzle view** (`_PuzzleView`):
-- Header with arrow_back IconButton (always shown, returns to setup) + puzzle title
+### PuzzleSolveScreen (lib/src/view/puzzle/puzzle_solve_screen.dart)
+
+**Full-screen solving view** — top-level route outside ShellRoute (no bottom nav bar or HomeScreen AppBar), maximizing screen real estate for the board and controls.
+
+- `PopScope(canPop: false)`: intercepts back button, calls `backToSetup()` then `context.go('/puzzles')`
+- **Adaptive board sizing**: `LayoutBuilder` computes board size from `constraints.maxHeight - 200`, clamped between 200px and screen width
+- Header with arrow_back IconButton (returns to setup) + puzzle title
 - Subtitle adapts to mode: solving / viewing solution / review
 - Chessboard with hint circle shapes overlay
 - **Stars & streak bar** (`_StarsBar`): always shown beneath the board
   - Stars: 🌟 icons for each group of 5, ⭐ for remainder (or single ⭐ when 0), count in gold text
-  - Streak ≥ 1: `🔥 X in a row`
+  - Streak >= 1: `🔥 X in a row`
   - Streak = 0: `💪 Let's start a streak!` (encouraging, no negative display)
   - Both counters reset daily; bar still visible at 0 to encourage play
 - Result banner (correct/wrong/solved) with kid-friendly text and emoji
 - Toolbar during solving: Hint (lightbulb icon) + View Solution (eye icon) buttons
-- Move navigation bar during review: |◁ ◁ ▷ ▷| buttons
+- Move navigation bar during review: |< < > >| buttons
 - "Continue Training" button after solved or in review mode
 
 **Error view**: network error vs generic, with button to return to setup
@@ -938,7 +961,7 @@ abstract class ChessPalsColors {
 
 ## 20. Known Constraints & Notes
 
-1. **Bot play requires internet** — all 8 bots are real Lichess accounts. There is a local heuristic bot for practice mode (level 1–8) but it is not Stockfish.
+1. **Bot play requires internet** — all 8 bots are real Lichess accounts (~750–1400 rapid). If a bot is unavailable (offline, account deleted, etc.), the app falls back to Lichess's built-in Stockfish AI at the configured fallback level (1–3). Bot availability is monitored weekly via a GitHub Actions workflow (`tools/check_bots.py`) that creates an issue if any bot is gone, banned, or stale (>30 days unseen).
 2. **Auth is OAuth2 PKCE** — the app uses Lichess OAuth2 with PKCE for login. The `web:mobile` scope is reserved for the official Lichess app and cannot be requested by third-party apps. Dev token injection (`--dart-define=LICHESS_TOKEN`) is available for development.
 3. **Rated games supported** — seeks and challenges support `rated: true/false` via a toggle in the Play Human screen.
 4. **`playerSide` from query param is unreliable** — the actual side is determined server-side from the `gameFull.white.id` vs the logged-in account id.
@@ -955,3 +978,4 @@ abstract class ChessPalsColors {
 15. **Chat excluded** — chat functionality is intentionally excluded from the app entirely. No chat UI, no approved phrases, no `sendChatMessage()` method.
 16. **Game abort handling** — when a game is aborted (e.g., no moves within 30s), the `gameState` event has `status == 'aborted'`. The app navigates home silently without showing an error dialog.
 17. **Seek endpoint is streaming** — `POST /api/board/seek` is a streaming endpoint that blocks until a match is found. Must be fire-and-forget (not awaited). Use a separate `http.Client` instance for the seek and the event stream to avoid blocking.
+18. **Bot health monitoring** — `tools/check_bots.py` checks all 8 bot accounts via Lichess API (`GET /api/user/{username}`). Reports existence, online status, last seen date, disabled/TOS-violation flags. Supports `--json` (machine-readable), `--ci` (exit code 1 on problems). GitHub Actions runs this weekly (Monday 08:23 UTC) and opens an issue with the `bot-health` label if any bot is problematic. Run locally: `python3 tools/check_bots.py`.
