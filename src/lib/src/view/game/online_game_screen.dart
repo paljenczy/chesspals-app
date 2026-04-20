@@ -482,57 +482,68 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _error != null
               ? _buildError(l)
-              : Column(
-                  children: [
-                    // Opponent row (animal character or generic opponent) with clock
-                    _buildOpponentRow(isMyTurn, l, opponentTimeMs, opponentActive),
+              : LayoutBuilder(
+                  builder: (context, constraints) {
+                    const chromHeight = 180.0;
+                    final maxBoardFromHeight = (constraints.maxHeight - chromHeight).clamp(200.0, double.infinity);
+                    final boardSize = constraints.maxWidth < maxBoardFromHeight
+                        ? constraints.maxWidth
+                        : maxBoardFromHeight;
 
-                    // Draw offer banner
-                    if (_opponentOfferedDraw && !_gameOver)
-                      _DrawOfferBanner(
-                        onAccept: _acceptDraw,
-                        onDecline: _declineDraw,
-                      ),
+                    return Column(
+                      children: [
+                        _buildOpponentRow(isMyTurn, l, opponentTimeMs, opponentActive),
 
-                    // Opponent gone banner
-                    if (_opponentGone && !_gameOver)
-                      _OpponentGoneBanner(
-                        claimWinInSeconds: _claimWinInSeconds,
-                        onClaimVictory: _claimVictory,
-                        onOfferDraw: _offerDraw,
-                      ),
+                        if (_opponentOfferedDraw && !_gameOver)
+                          _DrawOfferBanner(
+                            onAccept: _acceptDraw,
+                            onDecline: _declineDraw,
+                          ),
 
-                    // Board
-                    Chessboard(
-                        size: MediaQuery.of(context).size.width,
-                        fen: _position.fen,
-                        orientation: _playerSide,
-                        lastMove: _lastMove != null
-                            ? NormalMove(
-                                from: _lastMove!.from,
-                                to: _lastMove!.to,
-                              )
-                            : null,
-                        game: GameData(
-                          playerSide: _playerSide == Side.white
-                              ? PlayerSide.white
-                              : PlayerSide.black,
-                          isCheck: _position.isCheck,
-                          sideToMove: _position.turn,
-                          validMoves: validMoves,
-                          promotionMove: _pendingPromotion,
-                          onMove: _onMove,
-                          onPromotionSelection: _onPromotionSelection,
+                        if (_opponentGone && !_gameOver)
+                          _OpponentGoneBanner(
+                            claimWinInSeconds: _claimWinInSeconds,
+                            onClaimVictory: _claimVictory,
+                            onOfferDraw: _offerDraw,
+                          ),
+
+                        Center(
+                          child: SizedBox(
+                            width: boardSize,
+                            height: boardSize,
+                            child: Chessboard(
+                              size: boardSize,
+                              fen: _position.fen,
+                              orientation: _playerSide,
+                              lastMove: _lastMove != null
+                                  ? NormalMove(
+                                      from: _lastMove!.from,
+                                      to: _lastMove!.to,
+                                    )
+                                  : null,
+                              game: GameData(
+                                playerSide: _playerSide == Side.white
+                                    ? PlayerSide.white
+                                    : PlayerSide.black,
+                                isCheck: _position.isCheck,
+                                sideToMove: _position.turn,
+                                validMoves: validMoves,
+                                promotionMove: _pendingPromotion,
+                                onMove: _onMove,
+                                onPromotionSelection: _onPromotionSelection,
+                              ),
+                              settings: ChessboardSettings(
+                                colorScheme: ChessboardColorScheme.brown,
+                                pieceAssets: PieceSet.cburnett.assets,
+                              ),
+                            ),
+                          ),
                         ),
-                        settings: ChessboardSettings(
-                          colorScheme: ChessboardColorScheme.brown,
-                          pieceAssets: PieceSet.cburnett.assets,
-                        ),
-                      ),
 
-                    // Player row with clock
-                    _buildPlayerRow(l, playerTimeMs, playerActive),
-                  ],
+                        _buildPlayerRow(l, playerTimeMs, playerActive),
+                      ],
+                    );
+                  },
                 ),
       ),  // Scaffold
     );   // PopScope

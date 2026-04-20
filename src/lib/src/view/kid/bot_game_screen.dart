@@ -198,7 +198,7 @@ class _GameBody extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Reserve space for rows around the board, then give the rest to the board
-        const chromHeight = 200.0; // bot row + status + player row + buttons + padding
+        const chromHeight = 300.0; // bot row + status + player row + buttons + padding
         final maxBoardFromWidth = constraints.maxWidth;
         final maxBoardFromHeight = (constraints.maxHeight - chromHeight).clamp(200.0, double.infinity);
         final boardSize = maxBoardFromWidth < maxBoardFromHeight

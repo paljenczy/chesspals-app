@@ -12,6 +12,7 @@ import 'view/home/home_screen.dart';
 import 'view/kid/kid_bot_select_screen.dart';
 import 'view/kid/bot_game_screen.dart';
 import 'view/puzzle/puzzle_screen.dart';
+import 'view/puzzle/puzzle_solve_screen.dart';
 import 'view/play/play_human_screen.dart';
 import 'view/game/online_game_screen.dart';
 import 'view/game/analysis_screen.dart';
@@ -75,6 +76,10 @@ GoRouter _buildRouter(WidgetRef ref, ChangeNotifier authNotifier) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/puzzles/solve',
+        builder: (context, state) => const PuzzleSolveScreen(),
       ),
       GoRoute(
         path: '/bot/game/:level',
