@@ -1,0 +1,46 @@
+name: Bot Health Check
+
+on:
+  schedule:
+    - cron: '23 8 * * 1'  # Every Monday ~8:23 UTC
+  workflow_dispatch:        # Manual trigger from GitHub UI
+
+jobs:
+  check-bots:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check bot availability
+        id: check
+        run: |
+          python tools/check_bots.py
+          python tools/check_bots.py --ci
+
+      - name: Create issue if bots are unhealthy
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const output = execSync('python tools/check_bots.py').toString();
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ Lichess bot health check failed',
+              body: [
+                'The weekly bot health check found problems.\n',
+                '```',
+                output,
+                '```\n',
+                'Bots that are gone or stale will fall back to Stockfish, ',
+                'but should be replaced with active bots for the best experience.\n',
+                'Run `python tools/check_bots.py` locally for details.',
+              ].join('\n'),
+              labels: ['bot-health'],
+            });
