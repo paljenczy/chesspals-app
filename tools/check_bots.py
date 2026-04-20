@@ -17,7 +17,7 @@ BOTS = [
     {"name": "Flutter the Butterfly", "username": "larryz-alterego", "fallback": "SF 1"},
     {"name": "Zip the Hummingbird", "username": "uSunfish-l0", "fallback": "SF 1"},
     {"name": "Rosie the Rabbit", "username": "EdwardKillick", "fallback": "SF 1"},
-    {"name": "Kira the Kangaroo", "username": "AllieTheChessBot", "fallback": "SF 2"},
+    {"name": "Kira the Kangaroo", "username": "bernstein-2ply", "fallback": "SF 2"},
     {"name": "Dino the Deer", "username": "sargon-1ply", "fallback": "SF 2"},
     {"name": "Gabi the Giraffe", "username": "Humaia", "fallback": "SF 2"},
     {"name": "Tara the Tiger", "username": "bernstein-4ply", "fallback": "SF 3"},

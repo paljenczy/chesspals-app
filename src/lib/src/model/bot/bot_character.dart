@@ -65,15 +65,15 @@ enum BotCharacter {
     difficulty: '⭐⭐⭐ Tricky',
     colorHex: 0xFFFFCDD2,
   ),
-  // ~1260 rapid — AllieTheChessBot, human-like ML bot, 4,963+ rapid games
+  // ~1235 rapid — bernstein-2ply, Bernstein 1957 engine at 2-ply, 12,278+ rapid games
   kangaroo(
     id: 'kangaroo',
     name: 'Kira the Kangaroo',
     emoji: '🦘',
     svgAsset: 'assets/bot_avatars/kangaroo.svg',
     imageDir: 'assets/bot_avatars/kangaroo',
-    lichessUsername: 'AllieTheChessBot',
-    approxRating: 1260,
+    lichessUsername: 'bernstein-2ply',
+    approxRating: 1235,
     stockfishFallbackLevel: 2,
     description: "I learn by watching — I'll leap ahead when you least expect it!",
     difficulty: '⭐⭐⭐ Cunning',
