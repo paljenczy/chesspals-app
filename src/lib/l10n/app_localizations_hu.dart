@@ -93,15 +93,15 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get botDescRabbit =>
-      'Szökhetek ide-oda — vigyázz, tudok ravasz lenni!';
+      'Gyorsan ugrálok ide-oda — vigyázz, trükkös tudok lenni!';
 
   @override
   String get botDescKangaroo =>
-      'Figyeléssel tanulok — előre ugrok, mikor nem számítasz rá!';
+      'Szökdelek ide-oda — akkor ugrok előre, mikor nem számítasz rá!';
 
   @override
   String get botDescDeer =>
-      'Gyorsan és éleszen játszom — vigyázz a támadásaimra!';
+      'Gyorsan és élesen játszom — vigyázz a támadásaimra!';
 
   @override
   String get botDescGiraffe =>
@@ -319,18 +319,18 @@ class AppLocalizationsHu extends AppLocalizations {
   String get playHumanTryAgain => 'Újrapróbálás';
 
   @override
-  String get puzzleDailyTitle => '✨ Napi feladány';
+  String get puzzleDailyTitle => '✨ Napi feladvány';
 
   @override
   String puzzleTitle(String id) {
-    return '🧩 Feladány #$id';
+    return '🧩 Feladvány #$id';
   }
 
   @override
-  String get puzzleWhiteToMove => 'A fehér lép — találd meg a legjobb lépést!';
+  String get puzzleWhiteToMove => 'Világos lép — találd meg a legjobb lépést!';
 
   @override
-  String get puzzleBlackToMove => 'A fekete lép — találd meg a legjobb lépést!';
+  String get puzzleBlackToMove => 'Sötét lép — találd meg a legjobb lépést!';
 
   @override
   String get puzzleCorrect => 'Legjobb lépés! 🎉';
@@ -339,7 +339,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get puzzleWrong => 'Ez nem az — próbáld újra! 💪';
 
   @override
-  String get puzzleSolved => 'Feladány megoldva! 🏆';
+  String get puzzleSolved => 'Feladvány megoldva! 🏆';
 
   @override
   String get puzzleHint => 'Segítség kérése';
@@ -348,7 +348,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get puzzleViewSolution => 'Megoldás';
 
   @override
-  String get puzzleContinueTraining => 'Következő feladány';
+  String get puzzleContinueTraining => 'Következő feladvány';
 
   @override
   String get puzzleViewingSolution => 'Megoldás mutatása...';
