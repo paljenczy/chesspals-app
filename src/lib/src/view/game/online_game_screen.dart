@@ -211,18 +211,8 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
         pos.turn == _playerSide;
 
     if (botJustMoved) {
-      // Detect reaction once per bot move, immediately so the face changes
-      // during the "thinking" delay. _position holds the pre-bot-move state.
       if (moveCount > _lastReactionMoveCount && lastMove != null) {
         _lastReactionMoveCount = moveCount;
-        final reaction = detectReaction(
-          _position, pos, lastMove,
-          playerSide: _playerSide,
-        );
-        if (reaction != null) {
-          _avatarKey.currentState?.trigger(reaction);
-          ReactionAudio.play(reaction);
-        }
       }
       // Only start the thinking timer once per bot move. Duplicate stream
       // events (clock updates) must not cancel and restart the timer, as
@@ -232,7 +222,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
         _botThinkTimer = Timer(const Duration(seconds: 3), () {
           if (!mounted) return;
           _commitState(pos, lastMove, moveCount, parsedMoves, wtime, btime,
-              myDraw, theirDraw, gameOver, result, status);
+              myDraw, theirDraw, gameOver, result, status, isBotMove: true);
           setState(() => _botThinking = false);
         });
       }
@@ -256,10 +246,21 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     bool theirDraw,
     bool gameOver,
     String? result,
-    String? status,
-  ) {
-    // Bot reactions are detected in _applyState (before the thinking delay).
-    // Player reactions are detected in _submitMove (before the optimistic update).
+    String? status, {
+    bool isBotMove = false,
+  }) {
+    // For bot games: detect reaction now (after the thinking delay) using the
+    // pre-commit _position as oldPos, before setState overwrites it.
+    if (isBotMove && _character != null && lastMove != null) {
+      final reaction = detectReaction(
+        _position, pos, lastMove,
+        playerSide: _playerSide,
+      );
+      if (reaction != null) {
+        _avatarKey.currentState?.trigger(reaction);
+        ReactionAudio.play(reaction);
+      }
+    }
 
     final wasGameOver = _gameOver;
 
