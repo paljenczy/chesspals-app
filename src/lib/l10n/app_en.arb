@@ -20,6 +20,11 @@
     }
   },
 
+  "colorPickerTitle": "Play as…",
+  "colorWhite": "White",
+  "colorBlack": "Black",
+  "colorRandom": "Random",
+
   "botSelectTitle": "Choose your opponent!",
   "botSelectSubtitle": "Start easy and work your way up 🌟",
   "botRatingLabel": "~{rating} rapid",

@@ -45,6 +45,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get colorPickerTitle => 'Play as…';
+
+  @override
+  String get colorWhite => 'White';
+
+  @override
+  String get colorBlack => 'Black';
+
+  @override
+  String get colorRandom => 'Random';
+
+  @override
   String get botSelectTitle => 'Choose your opponent!';
 
   @override

@@ -164,6 +164,30 @@ abstract class AppLocalizations {
   /// **'Sign-in failed: {error}'**
   String loginErrorFailed(String error);
 
+  /// No description provided for @colorPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play as…'**
+  String get colorPickerTitle;
+
+  /// No description provided for @colorWhite.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get colorWhite;
+
+  /// No description provided for @colorBlack.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get colorBlack;
+
+  /// No description provided for @colorRandom.
+  ///
+  /// In en, this message translates to:
+  /// **'Random'**
+  String get colorRandom;
+
   /// No description provided for @botSelectTitle.
   ///
   /// In en, this message translates to:

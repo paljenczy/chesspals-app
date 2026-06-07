@@ -45,6 +45,18 @@ class AppLocalizationsHu extends AppLocalizations {
   }
 
   @override
+  String get colorPickerTitle => 'Játssz mint…';
+
+  @override
+  String get colorWhite => 'Világos';
+
+  @override
+  String get colorBlack => 'Sötét';
+
+  @override
+  String get colorRandom => 'Véletlenszerű';
+
+  @override
   String get botSelectTitle => 'Válassz ellenfelet!';
 
   @override

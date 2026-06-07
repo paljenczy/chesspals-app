@@ -15,6 +15,11 @@
   "loginErrorInvalid": "A bejelentkezés sikertelen. Próbáld újra.",
   "loginErrorFailed": "Bejelentkezés sikertelen: {error}",
 
+  "colorPickerTitle": "Játssz mint…",
+  "colorWhite": "Világos",
+  "colorBlack": "Sötét",
+  "colorRandom": "Véletlenszerű",
+
   "botSelectTitle": "Válassz ellenfelet!",
   "botSelectSubtitle": "Kezdd könnyűvel és haladj felfelé 🌟",
   "botRatingLabel": "~{rating} gyors",

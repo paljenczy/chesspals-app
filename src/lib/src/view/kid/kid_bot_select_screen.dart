@@ -75,14 +75,39 @@ class _BotCard extends StatefulWidget {
 class _BotCardState extends State<_BotCard> {
   bool _loading = false;
 
-  Future<void> _challenge() async {
+  Future<void> _showColorPicker() async {
+    final l = AppLocalizations.of(context);
+    final color = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(
+          l.colorPickerTitle,
+          textAlign: TextAlign.center,
+          style: Theme.of(ctx).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _ColorButton(label: l.colorWhite, icon: '♔', value: 'white', bgColor: Colors.white, fgColor: Colors.black87),
+            _ColorButton(label: l.colorRandom, icon: '🎲', value: 'random', bgColor: Colors.grey[200]!, fgColor: Colors.black87),
+            _ColorButton(label: l.colorBlack, icon: '♚', value: 'black', bgColor: Colors.grey[850]!, fgColor: Colors.white),
+          ],
+        ),
+      ),
+    );
+    if (color == null || !mounted) return;
+    await _challenge(color);
+  }
+
+  Future<void> _challenge(String color) async {
     if (_loading) return;
     setState(() => _loading = true);
     try {
       final service = BotService(LichessClient());
-      final gameId = await service.challengeBot(widget.character);
+      final gameId = await service.challengeBot(widget.character, color: color);
       if (!mounted) return;
-      context.go('/game/$gameId?side=white&from=bot&char=${widget.index}');
+      context.go('/game/$gameId?side=$color&from=bot&char=${widget.index}');
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
@@ -107,7 +132,7 @@ class _BotCardState extends State<_BotCard> {
       ),
       color: cardColor,
       child: InkWell(
-        onTap: _loading ? null : _challenge,
+        onTap: _loading ? null : _showColorPicker,
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
@@ -160,6 +185,52 @@ class _BotCardState extends State<_BotCard> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ColorButton extends StatelessWidget {
+  const _ColorButton({
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.bgColor,
+    required this.fgColor,
+  });
+
+  final String label;
+  final String icon;
+  final String value;
+  final Color bgColor;
+  final Color fgColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pop(value),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: bgColor,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.grey[400]!, width: 1.5),
+              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2))],
+            ),
+            child: Center(
+              child: Text(icon, style: TextStyle(fontSize: 32, color: fgColor)),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
     );
   }

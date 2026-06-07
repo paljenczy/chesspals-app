@@ -93,6 +93,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     if (widget.playerSide == 'black') {
       _playerSide = Side.black;
     } else {
+      // 'white', 'random', or anything else defaults to white until gameFull corrects it
       _playerSide = Side.white;
     }
     _subscribeToGame();
