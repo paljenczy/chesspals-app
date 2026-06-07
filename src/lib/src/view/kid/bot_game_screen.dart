@@ -108,15 +108,23 @@ class _BotGameScreenState extends ConsumerState<BotGameScreen> {
         final oldState = prev?.value;
         final newState = next.value;
         if (oldState == null || newState == null) return;
-        final reaction = detectReaction(
-          oldState.position,
-          newState.position,
-          newState.lastMove,
-          playerSide: Side.white,
-        );
-        if (reaction != null) {
-          _avatarKey.currentState?.trigger(reaction);
-          ReactionAudio.play(reaction);
+
+        // Only react after the bot's move (black just played → it's white's turn).
+        // Reacting on the player's move would give away the bot's emotional
+        // response before the 3-second thinking delay expires.
+        final botJustMoved = newState.sideToMove == Side.white &&
+            oldState.sideToMove == Side.black;
+        if (botJustMoved) {
+          final reaction = detectReaction(
+            oldState.position,
+            newState.position,
+            newState.lastMove,
+            playerSide: Side.white,
+          );
+          if (reaction != null) {
+            _avatarKey.currentState?.trigger(reaction);
+            ReactionAudio.play(reaction);
+          }
         }
 
         // Show game-over dialog when game ends
