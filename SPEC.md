@@ -359,7 +359,7 @@ All calls to `https://lichess.org` with `Authorization: Bearer <token>`.
 
 | Enum | English Name | Emoji | Lichess Username | Rating | SF Fallback | Difficulty |
 |------|-------------|-------|-----------------|--------|-------------|------------|
-| `bee` | Bella the Bee | 🐝 | grandQ_AI | 744 | Level 1 | ⭐ Beginner |
+| `bee` | Bella the Bee | 🐝 | PARTNER3615DIAGO | 704 | Level 1 | ⭐ Beginner |
 | `butterfly` | Flutter the Butterfly | 🦋 | larryz-alterego | 884 | Level 1 | ⭐⭐ Explorer |
 | `hummingbird` | Zip the Hummingbird | 🐦 | uSunfish-l0 | 896 | Level 1 | ⭐⭐ Speedy |
 | `rabbit` | Rosie the Rabbit | 🐰 | EdwardKillick | 1140 | Level 1 | ⭐⭐⭐ Tricky |

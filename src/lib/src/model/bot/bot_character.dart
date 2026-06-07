@@ -1,6 +1,7 @@
 /// Bot character definitions for ChessPals
 /// Each BotCharacter maps to a real Lichess bot account (challenged via POST /api/challenge/{username}).
-/// All bots are between 750–1500 rapid rating. No embedded engine — internet required for bot play.
+/// All bots are between 700–1550 rapid rating. No embedded engine — internet required for bot play.
+library;
 
 // lib/src/model/bot/bot_character.dart
 
@@ -9,113 +10,113 @@ import '../../view/game/bot_reaction.dart';
 
 /// Represents a real Lichess bot account that kids can challenge.
 enum BotCharacter {
-  // ~744 rapid — grandQ_AI, Q-learning bot, 6,190+ rapid games, reliably online
+  // ~704 rapid — PARTNER3615DIAGO, 2,955+ rapid games, reliably online
   bee(
     id: 'bee',
     name: 'Bella the Bee',
     emoji: '🐝',
     svgAsset: 'assets/bot_avatars/bee.svg',
     imageDir: 'assets/bot_avatars/bee',
-    lichessUsername: 'grandQ_AI',
-    approxRating: 744,
+    lichessUsername: 'PARTNER3615DIAGO',
+    approxRating: 704,
     stockfishFallbackLevel: 1,
     description: "I'm just a little bee — I buzz around and make lots of mistakes!",
     difficulty: '⭐ Beginner',
     colorHex: 0xFFFDD835,
   ),
-  // ~884 rapid — larryz-alterego, Turochamp-style beginner bot, 6,044+ rapid games
+  // ~871 rapid — dala-700, Elo-aligned neural network, 60+ rapid games
   butterfly(
     id: 'butterfly',
     name: 'Flutter the Butterfly',
     emoji: '🦋',
     svgAsset: 'assets/bot_avatars/butterfly.svg',
     imageDir: 'assets/bot_avatars/butterfly',
-    lichessUsername: 'larryz-alterego',
-    approxRating: 884,
+    lichessUsername: 'dala-700',
+    approxRating: 871,
     stockfishFallbackLevel: 1,
     description: "I flutter around the board — I'm still finding my wings!",
     difficulty: '⭐⭐ Explorer',
     colorHex: 0xFFCE93D8,
   ),
-  // ~896 rapid — uSunfish-l0, MicroPython Sunfish on ESP32, 3,245+ rapid games
+  // ~884 rapid — larryz-alterego, Turochamp-style beginner bot, 6,044+ rapid games
   hummingbird(
     id: 'hummingbird',
     name: 'Zip the Hummingbird',
     emoji: '🐦',
     svgAsset: 'assets/bot_avatars/hummingbird.svg',
     imageDir: 'assets/bot_avatars/hummingbird',
-    lichessUsername: 'uSunfish-l0',
-    approxRating: 896,
+    lichessUsername: 'larryz-alterego',
+    approxRating: 884,
     stockfishFallbackLevel: 1,
     description: "I move super fast — blink and you'll miss my tricks!",
     difficulty: '⭐⭐ Speedy',
     colorHex: 0xFF80DEEA,
   ),
-  // ~1140 rapid — EdwardKillick, 1,994+ rapid games, reliably online
+  // ~896 rapid — uSunfish-l0, MicroPython Sunfish on ESP32, 3,245+ rapid games
   rabbit(
     id: 'rabbit',
     name: 'Rosie the Rabbit',
     emoji: '🐰',
     svgAsset: 'assets/bot_avatars/rabbit.svg',
     imageDir: 'assets/bot_avatars/rabbit',
-    lichessUsername: 'EdwardKillick',
-    approxRating: 1140,
+    lichessUsername: 'uSunfish-l0',
+    approxRating: 896,
     stockfishFallbackLevel: 1,
     description: "I hop around quickly — watch out, I can be tricky!",
     difficulty: '⭐⭐⭐ Tricky',
     colorHex: 0xFFFFCDD2,
   ),
-  // ~1235 rapid — bernstein-2ply, Bernstein 1957 engine at 2-ply, 12,278+ rapid games
+  // ~1016 rapid — dala-900, Elo-aligned neural network, 114+ rapid games
   kangaroo(
     id: 'kangaroo',
     name: 'Kira the Kangaroo',
     emoji: '🦘',
     svgAsset: 'assets/bot_avatars/kangaroo.svg',
     imageDir: 'assets/bot_avatars/kangaroo',
-    lichessUsername: 'bernstein-2ply',
-    approxRating: 1235,
+    lichessUsername: 'dala-900',
+    approxRating: 1016,
     stockfishFallbackLevel: 2,
     description: "I learn by watching — I'll leap ahead when you least expect it!",
     difficulty: '⭐⭐⭐ Cunning',
     colorHex: 0xFFD7CCC8,
   ),
-  // ~1290 rapid — sargon-1ply, classic engine, 39,924+ rapid games, very reliable
+  // ~1302 rapid — dala-1100, Elo-aligned neural network, 90+ rapid games
   deer(
     id: 'deer',
     name: 'Dino the Deer',
     emoji: '🦌',
     svgAsset: 'assets/bot_avatars/deer.svg',
     imageDir: 'assets/bot_avatars/deer',
-    lichessUsername: 'sargon-1ply',
-    approxRating: 1290,
+    lichessUsername: 'dala-1100',
+    approxRating: 1302,
     stockfishFallbackLevel: 2,
     description: "I play sharp and fast — watch out for my attacks!",
     difficulty: '⭐⭐⭐ Sharp',
     colorHex: 0xFFA1887F,
   ),
-  // ~1376 rapid — Humaia, Maia-1400 network, 17,786+ rapid games, reliably online
+  // ~1392 rapid — dala-1300, Elo-aligned neural network, 116+ rapid games
   giraffe(
     id: 'giraffe',
     name: 'Gabi the Giraffe',
     emoji: '🦒',
     svgAsset: 'assets/bot_avatars/giraffe.svg',
     imageDir: 'assets/bot_avatars/giraffe',
-    lichessUsername: 'Humaia',
-    approxRating: 1376,
+    lichessUsername: 'dala-1300',
+    approxRating: 1392,
     stockfishFallbackLevel: 2,
     description: "I see the whole board from up high — I play like a real person!",
     difficulty: '⭐⭐⭐⭐ Fierce',
     colorHex: 0xFFFFCC80,
   ),
-  // ~1408 rapid — bernstein-4ply, Bernstein 1957 engine, 7,181+ rapid games
+  // ~1543 rapid — dala-1600, Elo-aligned neural network, 221+ rapid games
   tiger(
     id: 'tiger',
     name: 'Tara the Tiger',
     emoji: '🐯',
     svgAsset: 'assets/bot_avatars/tiger.svg',
     imageDir: 'assets/bot_avatars/tiger',
-    lichessUsername: 'bernstein-4ply',
-    approxRating: 1408,
+    lichessUsername: 'dala-1600',
+    approxRating: 1543,
     stockfishFallbackLevel: 3,
     description: "I pounce when you make a mistake — can you outsmart me?",
     difficulty: '⭐⭐⭐⭐ Fierce+',
@@ -177,24 +178,22 @@ class BotService {
   Future<String> challengeBot(
     BotCharacter character, {
     String color = 'white',
-    int clockLimit = 600,
-    int clockIncrement = 5,
   }) async {
     try {
       return await _client.challengeUser(
         username: character.lichessUsername,
         color: color,
-        clockLimit: clockLimit,
-        clockIncrement: clockIncrement,
+        clockLimit: 1440,
+        clockIncrement: 0,
         rated: false,
       );
-    } catch (_) {
-      // Bot unavailable — fall back to Lichess Stockfish AI
+    } catch (e) {
+      print('Bot ${character.lichessUsername} challenge failed: $e — falling back to Stockfish level ${character.stockfishFallbackLevel}');
       return _client.challengeAi(
         level: character.stockfishFallbackLevel,
         color: color,
-        clockLimit: clockLimit,
-        clockIncrement: clockIncrement,
+        clockLimit: 10800,
+        clockIncrement: 0,
       );
     }
   }

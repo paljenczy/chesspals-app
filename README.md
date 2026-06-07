@@ -31,7 +31,7 @@ chess-kids-app/
 
 | Character | Lichess Bot | Rating | Stockfish Fallback |
 |-----------|------------|--------|--------------------|
-| Bella the Bee | grandQ_AI | ~740 | Level 1 |
+| Bella the Bee | PARTNER3615DIAGO | ~700 | Level 1 |
 | Flutter the Butterfly | larryz-alterego | ~880 | Level 1 |
 | Zip the Hummingbird | uSunfish-l0 | ~900 | Level 1 |
 | Rosie the Rabbit | EdwardKillick | ~1140 | Level 1 |

@@ -13,14 +13,14 @@ import urllib.request
 from datetime import datetime, timezone
 
 BOTS = [
-    {"name": "Bella the Bee", "username": "grandQ_AI", "fallback": "SF 1"},
-    {"name": "Flutter the Butterfly", "username": "larryz-alterego", "fallback": "SF 1"},
-    {"name": "Zip the Hummingbird", "username": "uSunfish-l0", "fallback": "SF 1"},
-    {"name": "Rosie the Rabbit", "username": "EdwardKillick", "fallback": "SF 1"},
-    {"name": "Kira the Kangaroo", "username": "bernstein-2ply", "fallback": "SF 2"},
-    {"name": "Dino the Deer", "username": "sargon-1ply", "fallback": "SF 2"},
-    {"name": "Gabi the Giraffe", "username": "Humaia", "fallback": "SF 2"},
-    {"name": "Tara the Tiger", "username": "bernstein-4ply", "fallback": "SF 3"},
+    {"name": "Bella the Bee", "username": "PARTNER3615DIAGO", "fallback": "SF 1"},
+    {"name": "Flutter the Butterfly", "username": "dala-700", "fallback": "SF 1"},
+    {"name": "Zip the Hummingbird", "username": "larryz-alterego", "fallback": "SF 1"},
+    {"name": "Rosie the Rabbit", "username": "uSunfish-l0", "fallback": "SF 1"},
+    {"name": "Kira the Kangaroo", "username": "dala-900", "fallback": "SF 2"},
+    {"name": "Dino the Deer", "username": "dala-1100", "fallback": "SF 2"},
+    {"name": "Gabi the Giraffe", "username": "dala-1300", "fallback": "SF 2"},
+    {"name": "Tara the Tiger", "username": "dala-1600", "fallback": "SF 3"},
 ]
 
 STALE_DAYS = 30
