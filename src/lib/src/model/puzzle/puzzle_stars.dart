@@ -2,6 +2,7 @@
 ///
 /// Stars are earned for perfect solves (no wrong moves, no viewing solution).
 /// Both counters reset at midnight (local time) and persist via SharedPreferences.
+library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -69,7 +69,7 @@ class BotGameNotifier extends AsyncNotifier<BotGameState> {
     return _newGameState();
   }
 
-  BotGameState _newGameState() => BotGameState(
+  BotGameState _newGameState() => const BotGameState(
         position: Chess.initial,
         status: GameStatus.playing,
       );

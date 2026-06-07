@@ -2,11 +2,13 @@ import 'package:chessground/chessground.dart';
 import 'package:dartchess/dartchess.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../model/settings/board_theme_provider.dart';
 
 /// A screen for reviewing a completed game move-by-move.
-class AnalysisScreen extends StatefulWidget {
+class AnalysisScreen extends ConsumerStatefulWidget {
   const AnalysisScreen({
     super.key,
     required this.moves,
@@ -19,10 +21,10 @@ class AnalysisScreen extends StatefulWidget {
   final Side playerSide;
 
   @override
-  State<AnalysisScreen> createState() => _AnalysisScreenState();
+  ConsumerState<AnalysisScreen> createState() => _AnalysisScreenState();
 }
 
-class _AnalysisScreenState extends State<AnalysisScreen> {
+class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
   int _currentPly = 0;
 
   /// Pre-computed positions for each ply (index 0 = starting position).
@@ -105,7 +107,7 @@ class _AnalysisScreenState extends State<AnalysisScreen> {
                   onPromotionSelection: (_) {},
                 ),
                 settings: ChessboardSettings(
-                  colorScheme: ChessboardColorScheme.green,
+                  colorScheme: ref.watch(boardThemeProvider).colorScheme,
                   pieceAssets: PieceSet.cburnett.assets,
                 ),
               ),

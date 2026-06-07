@@ -68,6 +68,7 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   BotReaction? _activeReaction;
+  int _reactionGeneration = 0;
 
   // Durations per reaction (animation phase)
   static const _durations = {
@@ -86,9 +87,11 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
     _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 550));
     _ctrl.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        // Hold the reaction face for a while before resetting to neutral
+        final gen = _reactionGeneration;
         Future.delayed(_holdDuration, () {
-          if (mounted) setState(() => _activeReaction = null);
+          if (mounted && _reactionGeneration == gen) {
+            setState(() => _activeReaction = null);
+          }
         });
       }
     });
@@ -104,6 +107,7 @@ class BotCharacterAvatarState extends State<BotCharacterAvatar>
   void trigger(BotReaction reaction) {
     if (!mounted) return;
     debugPrint('🎭 Bot reaction: $reaction');
+    _reactionGeneration++;
     _ctrl.stop();
     _ctrl.duration = _durations[reaction];
     setState(() => _activeReaction = reaction);

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../model/auth/lichess_account.dart';
+import '../../model/settings/board_theme_provider.dart';
 import '../../model/settings/locale_provider.dart';
 
 /// Settings screen — profile, language picker, app info.
@@ -14,6 +15,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l = AppLocalizations.of(context);
     final locale = ref.watch(localeProvider);
+    final boardTheme = ref.watch(boardThemeProvider);
     final account = ref.watch(accountProvider).value;
 
     return Scaffold(
@@ -58,6 +60,35 @@ class SettingsScreen extends ConsumerWidget {
             trailing: _LanguageToggle(
               currentLocale: locale,
               onChanged: (loc) => ref.read(localeProvider.notifier).setLocale(loc),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.grid_on, color: Theme.of(context).iconTheme.color),
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(l.settingsBoardTheme,
+                            style: const TextStyle(fontSize: 16)),
+                        Text(l.settingsBoardThemeSub,
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _BoardThemePicker(
+                  current: boardTheme,
+                  onSelected: (t) =>
+                      ref.read(boardThemeProvider.notifier).setTheme(t),
+                ),
+              ],
             ),
           ),
           ListTile(
@@ -211,6 +242,92 @@ class _SectionHeader extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
       ),
+    );
+  }
+}
+
+class _BoardThemePicker extends StatelessWidget {
+  const _BoardThemePicker({required this.current, required this.onSelected});
+
+  final BoardTheme current;
+  final ValueChanged<BoardTheme> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: BoardTheme.values.map((theme) {
+        final selected = theme == current;
+        return GestureDetector(
+          onTap: () => onSelected(theme),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: selected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.transparent,
+                width: 3,
+              ),
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.4),
+                        blurRadius: 6,
+                        spreadRadius: 1,
+                      ),
+                    ]
+                  : null,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: _MiniBoard(theme: theme),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _MiniBoard extends StatelessWidget {
+  const _MiniBoard({required this.theme});
+  final BoardTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(child: Container(color: theme.lightSquare)),
+              Expanded(child: Container(color: theme.darkSquare)),
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            children: [
+              Expanded(child: Container(color: theme.darkSquare)),
+              Expanded(child: Container(color: theme.lightSquare)),
+            ],
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          theme.localizedLabel(AppLocalizations.of(context)),
+          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }

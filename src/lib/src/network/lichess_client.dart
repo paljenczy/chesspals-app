@@ -2,6 +2,7 @@
 ///
 /// Handles authentication, HTTP requests, and ndjson streaming
 /// for all three core features: bot games, puzzles, and human play.
+library;
 
 // lib/src/network/lichess_client.dart
 
@@ -44,6 +45,7 @@ class LichessClient {
     };
   }
 
+  // ignore: unused_element
   Future<Map<String, String>> get _authFormHeaders async {
     final headers = await _authHeaders;
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -72,20 +74,21 @@ class LichessClient {
   Future<String> challengeUser({
     required String username,
     String color = 'random',
-    int clockLimit = 600,
-    int clockIncrement = 5,
+    int? clockLimit,
+    int? clockIncrement,
     bool rated = false,
   }) async {
     final headers = await _authHeaders;
+    final body = <String, String>{
+      'rated': rated.toString(),
+      'color': color,
+    };
+    if (clockLimit != null) body['clock.limit'] = clockLimit.toString();
+    if (clockIncrement != null) body['clock.increment'] = clockIncrement.toString();
     final response = await _httpClient.post(
       Uri.parse('$_baseUrl/api/challenge/$username'),
       headers: headers,
-      body: {
-        'rated': rated.toString(),
-        'color': color,
-        'clock.limit': clockLimit.toString(),
-        'clock.increment': clockIncrement.toString(),
-      },
+      body: body,
     );
     _checkStatus(response);
     final json = jsonDecode(response.body) as Map<String, dynamic>;

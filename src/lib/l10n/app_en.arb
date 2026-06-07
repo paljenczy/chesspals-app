@@ -212,6 +212,13 @@
   "settingsLanguageEnglish": "English",
   "settingsLanguageHungarian": "Magyar",
 
+  "settingsBoardTheme": "Board Color",
+  "settingsBoardThemeSub": "Choose the color of the chessboard",
+  "boardThemeBrown": "Brown",
+  "boardThemeBlue": "Blue",
+  "boardThemeGreen": "Green",
+  "boardThemeIce": "Ice",
+
   "settingsLogout": "Log out",
   "settingsLogoutConfirm": "Are you sure you want to log out?",
   "settingsLogoutCancel": "Cancel",

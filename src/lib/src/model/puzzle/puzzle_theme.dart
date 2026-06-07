@@ -2,6 +2,7 @@
 ///
 /// Theme data sourced from Lichess API.
 /// Hungarian translations from the official Lichess hu-HU.xml.
+library;
 
 import 'package:flutter/widgets.dart';
 import '../../../l10n/app_localizations.dart';

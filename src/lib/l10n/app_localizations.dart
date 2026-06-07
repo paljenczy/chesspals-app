@@ -962,6 +962,42 @@ abstract class AppLocalizations {
   /// **'Magyar'**
   String get settingsLanguageHungarian;
 
+  /// No description provided for @settingsBoardTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Board Color'**
+  String get settingsBoardTheme;
+
+  /// No description provided for @settingsBoardThemeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the color of the chessboard'**
+  String get settingsBoardThemeSub;
+
+  /// No description provided for @boardThemeBrown.
+  ///
+  /// In en, this message translates to:
+  /// **'Brown'**
+  String get boardThemeBrown;
+
+  /// No description provided for @boardThemeBlue.
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get boardThemeBlue;
+
+  /// No description provided for @boardThemeGreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get boardThemeGreen;
+
+  /// No description provided for @boardThemeIce.
+  ///
+  /// In en, this message translates to:
+  /// **'Ice'**
+  String get boardThemeIce;
+
   /// No description provided for @settingsLogout.
   ///
   /// In en, this message translates to:

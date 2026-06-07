@@ -53,7 +53,7 @@ class _PlayHumanScreenState extends ConsumerState<PlayHumanScreen> {
             loading: () => const _SeekingView(),
             error: (e, _) => _ErrorView(message: e.toString()),
             data: (state) => state == null
-                ? _IdleView(timeControls: PlayHumanScreen._timeControls)
+                ? const _IdleView(timeControls: PlayHumanScreen._timeControls)
                 : const _SeekingView(),
           ),
         ),

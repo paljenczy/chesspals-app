@@ -478,6 +478,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLanguageHungarian => 'Magyar';
 
   @override
+  String get settingsBoardTheme => 'Board Color';
+
+  @override
+  String get settingsBoardThemeSub => 'Choose the color of the chessboard';
+
+  @override
+  String get boardThemeBrown => 'Brown';
+
+  @override
+  String get boardThemeBlue => 'Blue';
+
+  @override
+  String get boardThemeGreen => 'Green';
+
+  @override
+  String get boardThemeIce => 'Ice';
+
+  @override
   String get settingsLogout => 'Log out';
 
   @override

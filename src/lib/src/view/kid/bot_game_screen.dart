@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../model/auth/lichess_account.dart';
 import '../../model/bot/bot_character.dart';
 import '../../model/game/bot_game_controller.dart';
+import '../../model/settings/board_theme_provider.dart';
 import '../../service/reaction_audio.dart';
 import '../../utils/bot_l10n.dart';
 import '../../model/game/material_diff.dart';
@@ -234,7 +235,7 @@ class _GameBody extends ConsumerWidget {
                     onPromotionSelection: controller.onPromotion,
                   ),
                   settings: ChessboardSettings(
-                    colorScheme: ChessboardColorScheme.green,
+                    colorScheme: ref.watch(boardThemeProvider).colorScheme,
                     pieceAssets: PieceSet.cburnett.assets,
                   ),
                 ),

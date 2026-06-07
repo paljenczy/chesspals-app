@@ -480,6 +480,24 @@ class AppLocalizationsHu extends AppLocalizations {
   String get settingsLanguageHungarian => 'Magyar';
 
   @override
+  String get settingsBoardTheme => 'Tábla színe';
+
+  @override
+  String get settingsBoardThemeSub => 'Válaszd ki a sakktábla színét';
+
+  @override
+  String get boardThemeBrown => 'Barna';
+
+  @override
+  String get boardThemeBlue => 'Kék';
+
+  @override
+  String get boardThemeGreen => 'Zöld';
+
+  @override
+  String get boardThemeIce => 'Jég';
+
+  @override
   String get settingsLogout => 'Kijelentkezés';
 
   @override

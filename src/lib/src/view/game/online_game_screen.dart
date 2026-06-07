@@ -13,6 +13,7 @@ import '../../model/auth/lichess_account.dart';
 import '../../model/bot/bot_character.dart';
 import '../../model/game/bot_game_controller.dart' show toValidMoves;
 import '../../model/game/material_diff.dart';
+import '../../model/settings/board_theme_provider.dart';
 import '../../network/lichess_client.dart';
 import '../../service/reaction_audio.dart';
 import '../../utils/bot_l10n.dart';
@@ -51,13 +52,19 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   int _totalMoves = 0; // total half-moves played (from server move list)
   List<NormalMove> _moveHistory = [];
   bool _dialogShown = false;
+  int _lastReactionMoveCount = 0;
   StreamSubscription<Map<String, dynamic>>? _gameSub;
   final LichessClient _client = LichessClient();
   final _avatarKey = GlobalKey<BotCharacterAvatarState>();
 
+  // ─── Bot thinking delay ────────────────────────────────────────────────────
+  Timer? _botThinkTimer;
+  bool _botThinking = false;
+
   // ─── Clock state ───────────────────────────────────────────────────────────
   int _whiteTimeMs = 0;
   int _blackTimeMs = 0;
+  bool _hasClocks = false;
   Timer? _clockTimer;
   DateTime? _lastClockTick;
 
@@ -96,12 +103,11 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     _gameSub = _client.streamGame(widget.gameId).listen(
       _handleGameEvent,
       onError: (e) {
-        // Bot challenge takes ~1s to be accepted — retry on 404 before giving up
         final isNotFound = e.toString().contains('No such game') ||
             e.toString().contains('404');
-        if (isNotFound && retryCount < 5) {
+        if (isNotFound && retryCount < 10) {
           _gameSub?.cancel();
-          Future.delayed(const Duration(seconds: 1), () {
+          Future.delayed(const Duration(seconds: 2), () {
             if (mounted) _subscribeToGame(retryCount: retryCount + 1);
           });
         } else if (mounted) {
@@ -147,7 +153,6 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   void _applyState(Map<String, dynamic> state) {
     final moves = (state['moves'] as String?)?.trim() ?? '';
     final status = state['status'] as String?;
-
     Position pos = Chess.initial;
     NormalMove? lastMove;
     int moveCount = 0;
@@ -193,9 +198,23 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       }
     }
 
-    if (mounted) {
-      // Detect bot reaction before applying new state
-      if (_character != null && lastMove != null) {
+    if (!mounted) return;
+
+    if (wtime != null && wtime > 0 || btime != null && btime > 0) {
+      _hasClocks = true;
+    }
+
+    // For bot games: delay showing the bot's move by 3 seconds
+    final botJustMoved = _character != null &&
+        !gameOver &&
+        moveCount > _totalMoves &&
+        pos.turn == _playerSide;
+
+    if (botJustMoved) {
+      // Detect reaction once per bot move, immediately so the face changes
+      // during the "thinking" delay. _position holds the pre-bot-move state.
+      if (moveCount > _lastReactionMoveCount && lastMove != null) {
+        _lastReactionMoveCount = moveCount;
         final reaction = detectReaction(
           _position, pos, lastMove,
           playerSide: _playerSide,
@@ -205,37 +224,72 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
           ReactionAudio.play(reaction);
         }
       }
-
-      final wasGameOver = _gameOver;
-
-      setState(() {
-        _position = pos;
-        _lastMove = lastMove;
-        _pendingPromotion = null;
-        _gameOver = gameOver;
-        _gameResult = result;
-        _totalMoves = moveCount;
-        _moveHistory = parsedMoves;
-        if (wtime != null) _whiteTimeMs = wtime;
-        if (btime != null) _blackTimeMs = btime;
-        _drawOfferedByMe = myDraw;
-        _opponentOfferedDraw = theirDraw;
-      });
-
-      _restartClockTimer();
-
-      // Aborted games: just navigate home silently
-      if (status == 'aborted' && !wasGameOver) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) context.go('/${widget.from}');
+      // Only start the thinking timer once per bot move. Duplicate stream
+      // events (clock updates) must not cancel and restart the timer, as
+      // that causes the game to stall indefinitely.
+      if (!_botThinking) {
+        setState(() => _botThinking = true);
+        _botThinkTimer = Timer(const Duration(seconds: 3), () {
+          if (!mounted) return;
+          _commitState(pos, lastMove, moveCount, parsedMoves, wtime, btime,
+              myDraw, theirDraw, gameOver, result, status);
+          setState(() => _botThinking = false);
         });
-        return;
       }
+      return;
+    }
 
-      // Show game-over dialog when game just ended
-      if (gameOver && !wasGameOver) {
-        _showGameOverDialog();
-      }
+    _botThinkTimer?.cancel();
+    if (_botThinking) setState(() => _botThinking = false);
+    _commitState(pos, lastMove, moveCount, parsedMoves, wtime, btime,
+        myDraw, theirDraw, gameOver, result, status);
+  }
+
+  void _commitState(
+    Position pos,
+    NormalMove? lastMove,
+    int moveCount,
+    List<NormalMove> parsedMoves,
+    int? wtime,
+    int? btime,
+    bool myDraw,
+    bool theirDraw,
+    bool gameOver,
+    String? result,
+    String? status,
+  ) {
+    // Bot reactions are detected in _applyState (before the thinking delay).
+    // Player reactions are detected in _submitMove (before the optimistic update).
+
+    final wasGameOver = _gameOver;
+
+    setState(() {
+      _position = pos;
+      _lastMove = lastMove;
+      _pendingPromotion = null;
+      _gameOver = gameOver;
+      _gameResult = result;
+      _totalMoves = moveCount;
+      _moveHistory = parsedMoves;
+      if (wtime != null) _whiteTimeMs = wtime;
+      if (btime != null) _blackTimeMs = btime;
+      _drawOfferedByMe = myDraw;
+      _opponentOfferedDraw = theirDraw;
+    });
+
+    if (_hasClocks) _restartClockTimer();
+
+    // Aborted games: just navigate home silently
+    if (status == 'aborted' && !wasGameOver) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go('/${widget.from}');
+      });
+      return;
+    }
+
+    // Show game-over dialog when game just ended
+    if (gameOver && !wasGameOver) {
+      _showGameOverDialog();
     }
   }
 
@@ -283,7 +337,21 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
 
   Future<void> _submitMove(NormalMove move) async {
     try {
-      final newPos = _position.play(move);
+      final oldPos = _position;
+      final newPos = oldPos.play(move);
+
+      // Detect reaction before optimistic update so old != new
+      if (_character != null) {
+        final reaction = detectReaction(
+          oldPos, newPos, move,
+          playerSide: _playerSide,
+        );
+        if (reaction != null) {
+          _avatarKey.currentState?.trigger(reaction);
+          ReactionAudio.play(reaction);
+        }
+      }
+
       setState(() {
         _position = newPos;
         _lastMove = move;
@@ -421,6 +489,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   void dispose() {
     _gameSub?.cancel();
     _clockTimer?.cancel();
+    _botThinkTimer?.cancel();
     if (widget.characterIndex != null) ReactionAudio.dispose();
     super.dispose();
   }
@@ -428,7 +497,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final isMyTurn = !_gameOver && _position.turn == _playerSide;
+    final isMyTurn = !_gameOver && !_botThinking && _position.turn == _playerSide;
     final validMoves = (!_gameOver && isMyTurn)
         ? toValidMoves(_position.legalMoves)
         : IMap<Square, ISet<Square>>();
@@ -438,6 +507,11 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     final playerTimeMs = _playerSide == Side.white ? _whiteTimeMs : _blackTimeMs;
     final opponentActive = !_gameOver && _position.turn != _playerSide;
     final playerActive = !_gameOver && _position.turn == _playerSide;
+    final isBotGame = _character != null;
+    final showOpponentClock = _hasClocks && !isBotGame;
+    // In bot games, hide the clock until <= 5 minutes remain
+    final showPlayerClock = _hasClocks &&
+        (!isBotGame || playerTimeMs <= 5 * 60 * 1000);
 
     return PopScope(
       canPop: false, // always intercept — we handle it ourselves
@@ -492,7 +566,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
 
                     return Column(
                       children: [
-                        _buildOpponentRow(isMyTurn, l, opponentTimeMs, opponentActive),
+                        _buildOpponentRow(isMyTurn, l, opponentTimeMs, opponentActive, showOpponentClock),
 
                         if (_opponentOfferedDraw && !_gameOver)
                           _DrawOfferBanner(
@@ -533,14 +607,14 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                                 onPromotionSelection: _onPromotionSelection,
                               ),
                               settings: ChessboardSettings(
-                                colorScheme: ChessboardColorScheme.brown,
+                                colorScheme: ref.watch(boardThemeProvider).colorScheme,
                                 pieceAssets: PieceSet.cburnett.assets,
                               ),
                             ),
                           ),
                         ),
 
-                        _buildPlayerRow(l, playerTimeMs, playerActive),
+                        _buildPlayerRow(l, playerTimeMs, playerActive, showPlayerClock),
                       ],
                     );
                   },
@@ -593,9 +667,9 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     );
   }
 
-  Widget _buildOpponentRow(bool isMyTurn, AppLocalizations l, int timeMs, bool active) {
+  Widget _buildOpponentRow(bool isMyTurn, AppLocalizations l, int timeMs, bool active, bool showClocks) {
     final character = _character;
-    final thinking = !_gameOver && !isMyTurn;
+    final thinking = !_gameOver && (!isMyTurn || _botThinking);
     final diff = MaterialDiff.fromPosition(_position);
     final opponentSide = _playerSide == Side.white ? diff.black : diff.white;
 
@@ -645,13 +719,13 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
               ],
             ),
           ),
-          _ChessClock(timeMs: timeMs, active: active),
+          if (showClocks) _ChessClock(timeMs: timeMs, active: active),
         ],
       ),
     );
   }
 
-  Widget _buildPlayerRow(AppLocalizations l, int timeMs, bool active) {
+  Widget _buildPlayerRow(AppLocalizations l, int timeMs, bool active, bool showClocks) {
     final account = ref.watch(accountProvider).value;
     final avatarIndex = account?.avatarIndex ?? 0;
     final username = account?.username ?? l.onlineYouLabel;
@@ -685,7 +759,12 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
               ],
             ),
           ),
-          _ChessClock(timeMs: timeMs, active: active),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            child: showClocks
+                ? _ChessClock(key: const ValueKey('clock'), timeMs: timeMs, active: active)
+                : const SizedBox.shrink(key: ValueKey('empty')),
+          ),
         ],
       ),
     );
@@ -722,7 +801,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
 
 /// Chess clock widget: shows time remaining with color-coded background.
 class _ChessClock extends StatelessWidget {
-  const _ChessClock({required this.timeMs, required this.active});
+  const _ChessClock({super.key, required this.timeMs, required this.active});
 
   final int timeMs;
   final bool active;

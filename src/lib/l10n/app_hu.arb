@@ -172,6 +172,13 @@
   "settingsLanguageEnglish": "English",
   "settingsLanguageHungarian": "Magyar",
 
+  "settingsBoardTheme": "Tábla színe",
+  "settingsBoardThemeSub": "Válaszd ki a sakktábla színét",
+  "boardThemeBrown": "Barna",
+  "boardThemeBlue": "Kék",
+  "boardThemeGreen": "Zöld",
+  "boardThemeIce": "Jég",
+
   "settingsLogout": "Kijelentkezés",
   "settingsLogoutConfirm": "Biztosan ki akarsz jelentkezni?",
   "settingsLogoutCancel": "Mégse",

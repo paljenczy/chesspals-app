@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../model/puzzle/puzzle_controller.dart';
 import '../../model/puzzle/puzzle_stars.dart';
+import '../../model/settings/board_theme_provider.dart';
 
 /// Full-screen puzzle solving view (no bottom navigation bar).
 class PuzzleSolveScreen extends ConsumerWidget {
@@ -144,7 +145,7 @@ class _PuzzleView extends ConsumerWidget {
                       onPromotionSelection: (_) {},
                     ),
                     settings: ChessboardSettings(
-                      colorScheme: ChessboardColorScheme.green,
+                      colorScheme: ref.watch(boardThemeProvider).colorScheme,
                       pieceAssets: PieceSet.cburnett.assets,
                     ),
                   ),
