@@ -51,7 +51,7 @@ class PuzzleState {
   IMap<Square, ISet<Square>> get validMoves {
     if (result != null) return IMap(); // lock board during animation/result
     if (mode != PuzzleMode.solving) return IMap(); // lock during solution/review
-    return toValidMoves(position.legalMoves);
+    return toValidMoves(position.legalMoves, position);
   }
 
   PuzzleState copyWith({

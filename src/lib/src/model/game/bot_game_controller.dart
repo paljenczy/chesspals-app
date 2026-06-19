@@ -6,12 +6,39 @@ enum GameStatus { playing, whiteWins, blackWins, draw, resigned }
 
 /// Converts dartchess legalMoves (IMap<Square, SquareSet>) to chessground
 /// ValidMoves (IMap<Square, ISet<Square>>).
-IMap<Square, ISet<Square>> toValidMoves(IMap<Square, SquareSet> legalMoves) {
+///
+/// Dartchess encodes castling as king→rook (e.g. e1→h1). For kid-friendly UX
+/// both the rook square AND the king's landing square (g1/c1/g8/c8) are
+/// included so clicking either square triggers castling.
+IMap<Square, ISet<Square>> toValidMoves(
+  IMap<Square, SquareSet> legalMoves,
+  Position position,
+) {
   return IMap({
     for (final e in legalMoves.entries)
       if (e.value != SquareSet.empty)
-        e.key: e.value.squares.toISet(),
+        e.key: _addCastlingAliases(e.key, e.value, position),
   });
+}
+
+ISet<Square> _addCastlingAliases(
+  Square from,
+  SquareSet dests,
+  Position position,
+) {
+  final piece = position.board.pieceAt(from);
+  if (piece?.role != Role.king) return dests.squares.toISet();
+
+  final side = piece!.color;
+  var squares = dests.squares.toList();
+
+  for (final cs in CastlingSide.values) {
+    final rookSq = position.castles.rookOf(side, cs);
+    if (rookSq != null && dests.has(rookSq)) {
+      squares.add(kingCastlesTo(side, cs));
+    }
+  }
+  return squares.toISet();
 }
 
 class BotGameState {
@@ -36,7 +63,7 @@ class BotGameState {
   IMap<Square, ISet<Square>> get validMoves {
     if (status != GameStatus.playing) return IMap();
     if (position.turn != Side.white) return IMap(); // Only on player's turn
-    return toValidMoves(position.legalMoves);
+    return toValidMoves(position.legalMoves, position);
   }
 
   BotGameState copyWith({

@@ -501,7 +501,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     final l = AppLocalizations.of(context);
     final isMyTurn = !_gameOver && !_botThinking && _position.turn == _playerSide;
     final validMoves = (!_gameOver && isMyTurn)
-        ? toValidMoves(_position.legalMoves)
+        ? toValidMoves(_position.legalMoves, _position)
         : IMap<Square, ISet<Square>>();
 
     // Determine which clock belongs to opponent vs player
