@@ -24,6 +24,9 @@ BOTS = [
 ]
 
 STALE_DAYS = 30
+# A bot that hasn't been online recently won't accept challenges.
+# We flag it as OFFLINE to surface transient issues the weekly cron would miss.
+OFFLINE_DAYS = 3
 
 
 def check_bot(username: str) -> dict:
@@ -74,6 +77,10 @@ def main():
         elif info["days_ago"] is not None and info["days_ago"] > STALE_DAYS:
             status = "STALE"
             problem = f"{bot['name']} ({bot['username']}) — last seen {info['days_ago']} days ago"
+        elif not info.get("online") and (info["days_ago"] is None or info["days_ago"] > OFFLINE_DAYS):
+            status = "OFFLINE"
+            seen_str = f"{info['days_ago']}d ago" if info.get("days_ago") is not None else "unknown"
+            problem = f"{bot['name']} ({bot['username']}) — currently offline (last seen: {seen_str})"
 
         if problem:
             problems.append(problem)
