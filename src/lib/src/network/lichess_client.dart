@@ -154,13 +154,38 @@ class LichessClient {
   }
 
   /// POST /api/board/game/{gameId}/move/{move} — Submit a move in UCI format.
-  Future<void> makeMove(String gameId, String move) async {
-    final headers = await _authHeaders;
-    final response = await _httpClient.post(
-      Uri.parse('$_baseUrl/api/board/game/$gameId/move/$move'),
-      headers: headers,
-    );
-    _checkStatus(response);
+  ///
+  /// Retries up to [maxAttempts] times with exponential backoff on network
+  /// errors. Each attempt has a [timeout] deadline so a stalled connection
+  /// never blocks indefinitely.
+  Future<void> makeMove(
+    String gameId,
+    String move, {
+    int maxAttempts = 3,
+    Duration timeout = const Duration(seconds: 8),
+  }) async {
+    Object? lastError;
+    for (var attempt = 0; attempt < maxAttempts; attempt++) {
+      if (attempt > 0) {
+        await Future.delayed(Duration(seconds: 1 << (attempt - 1))); // 1s, 2s
+      }
+      try {
+        final headers = await _authHeaders;
+        final response = await _httpClient
+            .post(
+              Uri.parse('$_baseUrl/api/board/game/$gameId/move/$move'),
+              headers: headers,
+            )
+            .timeout(timeout);
+        _checkStatus(response);
+        return; // success
+      } on LichessApiException {
+        rethrow; // 4xx errors are definitive — don't retry
+      } catch (e) {
+        lastError = e;
+      }
+    }
+    throw lastError!;
   }
 
   /// POST /api/board/game/{gameId}/resign
