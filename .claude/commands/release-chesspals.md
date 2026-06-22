@@ -46,16 +46,23 @@ Wait for the user to provide the new version before continuing.
 
 ---
 
-### Step 3 — Bump version in pubspec.yaml
+### Step 3 — Bump version in pubspec.yaml and l10n files
 
-Update `pubspec.yaml` with the new version the user provided. Use the Edit tool to change the `version:` line. Double-check the edit looks correct before continuing.
+Update `pubspec.yaml` with the new version the user provided. Use the Edit tool to change the `version:` line.
+
+Then update the version string in both ARB localisation files so the in-app About screen stays in sync:
+
+- `src/lib/l10n/app_en.arb` — change `"settingsAboutVersion"` value to `"Version SEMVER"` (e.g. `"Version 1.1.0"`)
+- `src/lib/l10n/app_hu.arb` — change `"settingsAboutVersion"` value to `"SEMVER verzió"` (e.g. `"1.1.0 verzió"`)
+
+Double-check all three edits look correct before continuing.
 
 ---
 
 ### Step 4 — Commit the version bump
 
 ```bash
-git -C . add src/pubspec.yaml
+git -C . add src/pubspec.yaml src/lib/l10n/app_en.arb src/lib/l10n/app_hu.arb
 git -C . commit -m "Bump version to vVERSION"
 git -C . push
 ```
