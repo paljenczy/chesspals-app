@@ -62,95 +62,114 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
     final l = AppLocalizations.of(context);
     final position = _positions[_currentPly];
     final lastMove = _lastMoves[_currentPly];
-    final boardSize =
-        MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l.analysisTitle),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          const controlsHeight = 80.0;
+          const counterHeight = 36.0;
+          const padding = 16.0;
+          final maxBoardFromHeight =
+              (constraints.maxHeight - controlsHeight - counterHeight - padding)
+                  .clamp(200.0, double.infinity);
+          final boardSize = constraints.maxWidth < maxBoardFromHeight
+              ? constraints.maxWidth
+              : maxBoardFromHeight;
 
-          // Move counter
-          Text(
-            _totalPlies > 0
-                ? l.analysisMoveCounter(_currentPly, _totalPlies)
-                : '',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Board
-          Center(
-            child: SizedBox(
-              width: boardSize,
-              height: boardSize,
-              child: Chessboard(
-                size: boardSize,
-                orientation: widget.playerSide,
-                fen: position.fen,
-                lastMove: lastMove,
-                game: GameData(
-                  playerSide: PlayerSide.none,
-                  sideToMove: position.turn,
-                  isCheck: position.isCheck,
-                  validMoves: IMap<Square, ISet<Square>>(),
-                  promotionMove: null,
-                  onMove: (_, {viaDragAndDrop}) {},
-                  onPromotionSelection: (_) {},
-                ),
-                settings: ChessboardSettings(
-                  colorScheme: ref.watch(boardThemeProvider).colorScheme,
-                  pieceAssets: PieceSet.cburnett.assets,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Navigation controls
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Column(
             children: [
-              IconButton.filled(
-                onPressed: _currentPly > 0 ? () => _goTo(0) : null,
-                icon: const Icon(Icons.skip_previous),
-                tooltip: 'Start',
+              const SizedBox(height: 8),
+
+              // Move counter
+              SizedBox(
+                height: counterHeight,
+                child: Center(
+                  child: Text(
+                    _totalPlies > 0
+                        ? l.analysisMoveCounter(_currentPly, _totalPlies)
+                        : '',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
-              IconButton.filled(
-                onPressed:
-                    _currentPly > 0 ? () => _goTo(_currentPly - 1) : null,
-                icon: const Icon(Icons.chevron_left),
-                tooltip: 'Previous',
+
+              // Board
+              Center(
+                child: SizedBox(
+                  width: boardSize,
+                  height: boardSize,
+                  child: Chessboard(
+                    size: boardSize,
+                    orientation: widget.playerSide,
+                    fen: position.fen,
+                    lastMove: lastMove,
+                    game: GameData(
+                      playerSide: PlayerSide.none,
+                      sideToMove: position.turn,
+                      isCheck: position.isCheck,
+                      validMoves: IMap<Square, ISet<Square>>(),
+                      promotionMove: null,
+                      onMove: (_, {viaDragAndDrop}) {},
+                      onPromotionSelection: (_) {},
+                    ),
+                    settings: ChessboardSettings(
+                      colorScheme: ref.watch(boardThemeProvider).colorScheme,
+                      pieceAssets: PieceSet.cburnett.assets,
+                    ),
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
-              IconButton.filled(
-                onPressed: _currentPly < _positions.length - 1
-                    ? () => _goTo(_currentPly + 1)
-                    : null,
-                icon: const Icon(Icons.chevron_right),
-                tooltip: 'Next',
-              ),
-              const SizedBox(width: 12),
-              IconButton.filled(
-                onPressed: _currentPly < _positions.length - 1
-                    ? () => _goTo(_positions.length - 1)
-                    : null,
-                icon: const Icon(Icons.skip_next),
-                tooltip: 'End',
+
+              const Spacer(),
+
+              // Navigation controls
+              SizedBox(
+                height: controlsHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton.filled(
+                      onPressed: _currentPly > 0 ? () => _goTo(0) : null,
+                      icon: const Icon(Icons.skip_previous),
+                      tooltip: 'Start',
+                    ),
+                    const SizedBox(width: 12),
+                    IconButton.filled(
+                      onPressed:
+                          _currentPly > 0 ? () => _goTo(_currentPly - 1) : null,
+                      icon: const Icon(Icons.chevron_left),
+                      tooltip: 'Previous',
+                    ),
+                    const SizedBox(width: 12),
+                    IconButton.filled(
+                      onPressed: _currentPly < _positions.length - 1
+                          ? () => _goTo(_currentPly + 1)
+                          : null,
+                      icon: const Icon(Icons.chevron_right),
+                      tooltip: 'Next',
+                    ),
+                    const SizedBox(width: 12),
+                    IconButton.filled(
+                      onPressed: _currentPly < _positions.length - 1
+                          ? () => _goTo(_positions.length - 1)
+                          : null,
+                      icon: const Icon(Icons.skip_next),
+                      tooltip: 'End',
+                    ),
+                  ],
+                ),
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
