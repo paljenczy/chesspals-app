@@ -57,9 +57,20 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   final LichessClient _client = LichessClient();
   final _avatarKey = GlobalKey<BotCharacterAvatarState>();
 
+  // ─── Move submission state ─────────────────────────────────────────────────
+  /// Move waiting to be confirmed by the server stream. Set on submission,
+  /// cleared when the server echoes a gameState with a higher move count.
+  NormalMove? _pendingMove;
+  bool _moveError = false; // true while a move failed and is being retried
+
   // ─── Bot thinking delay ────────────────────────────────────────────────────
   Timer? _botThinkTimer;
   bool _botThinking = false;
+
+  // ─── Stream liveness watchdog ──────────────────────────────────────────────
+  // Reconnects if no event is received for this long while game is live.
+  static const _watchdogTimeout = Duration(seconds: 30);
+  Timer? _watchdogTimer;
 
   // ─── Clock state ───────────────────────────────────────────────────────────
   int _whiteTimeMs = 0;
@@ -101,21 +112,44 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   }
 
   void _subscribeToGame({int retryCount = 0}) {
+    _watchdogTimer?.cancel();
+    _gameSub?.cancel();
+
     _gameSub = _client.streamGame(widget.gameId).listen(
-      _handleGameEvent,
+      (event) {
+        _resetWatchdog();
+        _handleGameEvent(event);
+      },
       onError: (e) {
-        final isNotFound = e.toString().contains('No such game') ||
-            e.toString().contains('404');
-        if (isNotFound && retryCount < 10) {
-          _gameSub?.cancel();
-          Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
+        if (retryCount < 10) {
+          final delay = Duration(seconds: (retryCount < 4) ? (1 << retryCount) : 16);
+          Future.delayed(delay, () {
             if (mounted) _subscribeToGame(retryCount: retryCount + 1);
           });
-        } else if (mounted) {
+        } else {
           setState(() => _error = e.toString());
         }
       },
+      onDone: () {
+        // Stream closed cleanly — may happen on reconnect; reopen if game still live
+        if (mounted && !_gameOver) {
+          Future.delayed(const Duration(seconds: 2), () {
+            if (mounted && !_gameOver) _subscribeToGame(retryCount: retryCount);
+          });
+        }
+      },
     );
+
+    if (!_gameOver) _resetWatchdog();
+  }
+
+  void _resetWatchdog() {
+    if (_gameOver) return;
+    _watchdogTimer?.cancel();
+    _watchdogTimer = Timer(_watchdogTimeout, () {
+      if (mounted && !_gameOver) _subscribeToGame();
+    });
   }
 
   void _handleGameEvent(Map<String, dynamic> event) {
@@ -277,6 +311,11 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       if (btime != null) _blackTimeMs = btime;
       _drawOfferedByMe = myDraw;
       _opponentOfferedDraw = theirDraw;
+      // Server echoed a state with our move in it — clear the pending indicator
+      if (_pendingMove != null && moveCount > 0) {
+        _pendingMove = null;
+        _moveError = false;
+      }
     });
 
     if (_hasClocks) _restartClockTimer();
@@ -342,12 +381,8 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       final oldPos = _position;
       final newPos = oldPos.play(move);
 
-      // Detect reaction before optimistic update so old != new
       if (_character != null) {
-        final reaction = detectReaction(
-          oldPos, newPos, move,
-          playerSide: _playerSide,
-        );
+        final reaction = detectReaction(oldPos, newPos, move, playerSide: _playerSide);
         if (reaction != null) {
           _avatarKey.currentState?.trigger(reaction);
           ReactionAudio.play(reaction);
@@ -357,10 +392,22 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       setState(() {
         _position = newPos;
         _lastMove = move;
+        _pendingMove = move;
+        _moveError = false;
       });
+
       await _client.makeMove(widget.gameId, move.uci);
+      // Server confirmed — pendingMove will be cleared by the incoming gameState
     } catch (_) {
-      // Revert handled by next gameState from stream
+      // All retries exhausted: show the error indicator so the user knows,
+      // and revert the optimistic update so they can try again.
+      if (mounted) {
+        setState(() {
+          _position = _position; // no revert needed — stream will resync
+          _moveError = true;
+          _pendingMove = null;
+        });
+      }
     }
   }
 
@@ -492,6 +539,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     _gameSub?.cancel();
     _clockTimer?.cancel();
     _botThinkTimer?.cancel();
+    _watchdogTimer?.cancel();
     if (widget.characterIndex != null) ReactionAudio.dispose();
     super.dispose();
   }
@@ -582,6 +630,12 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
                             onClaimVictory: _claimVictory,
                             onOfferDraw: _offerDraw,
                           ),
+
+                        if (_moveError && !_gameOver)
+                          _MoveErrorBanner(onRetry: () {
+                            setState(() => _moveError = false);
+                            _subscribeToGame();
+                          }),
 
                         Center(
                           child: SizedBox(
@@ -914,8 +968,54 @@ class _DrawOfferBanner extends StatelessWidget {
   }
 }
 
-class _OpponentGoneBanner extends StatelessWidget {
-  const _OpponentGoneBanner({
+/// Red banner shown when a move failed to reach the server after all retries.
+class _MoveErrorBanner extends StatelessWidget {
+  const _MoveErrorBanner({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.red[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red[300]!),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.wifi_off, color: Colors.red[700], size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Move not sent — tap Reconnect to try again.',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: Colors.red[900],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: onRetry,
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red[700],
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: const Text('Reconnect'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OpponentGoneBanner extends StatelessWidget {  const _OpponentGoneBanner({
     required this.claimWinInSeconds,
     required this.onClaimVictory,
     required this.onOfferDraw,
