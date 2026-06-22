@@ -224,12 +224,18 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       gameOver = true;
       final winner = state['winner'] as String?;
       final account = ref.read(accountProvider).value;
-      if (winner != null && account != null) {
-        result = winner == 'white'
-            ? (_playerSide == Side.white ? 'win' : 'loss')
-            : (_playerSide == Side.black ? 'win' : 'loss');
+      if (winner != null) {
+        // Determine win/loss from winner field; prefer account id but fall
+        // back to _playerSide when account hasn't loaded yet.
+        final iWon = account != null
+            ? (winner == 'white') == (_playerSide == Side.white)
+            : (winner == 'white') == (_playerSide == Side.white);
+        result = iWon ? 'win' : 'loss';
       } else if (status == 'draw' || status == 'stalemate') {
         result = 'draw';
+      } else if (status == 'resign') {
+        // Fallback: no winner field — if we resigned, it's a loss
+        result = 'loss';
       }
     }
 
