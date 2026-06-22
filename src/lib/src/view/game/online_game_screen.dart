@@ -471,6 +471,10 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
 
   /// Shows the leave dialog. Returns true if the user confirmed and the
   /// game was properly closed (resigned or aborted). Returns false if cancelled.
+  ///
+  /// For resignations, does NOT navigate away — the incoming gameState from the
+  /// stream will trigger _showGameOverDialog() so the user can still Review.
+  /// For aborts, navigates away immediately (no game-over dialog needed).
   Future<bool> _confirmLeave() async {
     if (_gameOver) return true; // already over, just navigate
     final l = AppLocalizations.of(context);
@@ -496,10 +500,13 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     if (confirmed != true) return false;
     if (canAbort) {
       await _abort();
+      return true; // abort: caller navigates away immediately
     } else {
       await _resign();
+      // Resignation: don't navigate — the stream delivers a gameState with
+      // status=resigned which fires _showGameOverDialog() so Review works.
+      return false;
     }
-    return true;
   }
 
   void _showGameOverDialog() {
