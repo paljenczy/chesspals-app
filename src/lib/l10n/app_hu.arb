@@ -169,7 +169,7 @@
   "settingsTitle": "Beállítások",
   "settingsSectionApp": "Alkalmazás",
   "settingsAbout": "A SakkBarátokról",
-  "settingsAboutVersion": "1.0.0 verzió",
+  "settingsAboutVersion": "1.0.1 verzió",
   "settingsAboutText": "Egy gyerekbarát sakk alkalmazás. A bot játék a nyílt forráskódú Stockfish motort használja. Az online feladványok és párosítás a Lichess API-t használja.",
   "settingsPrivacyPolicy": "Adatvédelmi irányelvek",
   "settingsLanguage": "Nyelv",

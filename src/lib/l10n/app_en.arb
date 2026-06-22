@@ -209,7 +209,7 @@
   "settingsTitle": "Settings",
   "settingsSectionApp": "App",
   "settingsAbout": "About ChessPals",
-  "settingsAboutVersion": "Version 1.0.0",
+  "settingsAboutVersion": "Version 1.0.1",
   "settingsAboutText": "A kid-friendly chess app. Bot play uses the open-source Stockfish engine. Online puzzles and matchmaking use the Lichess API.",
   "settingsPrivacyPolicy": "Privacy Policy",
   "settingsLanguage": "Language",
