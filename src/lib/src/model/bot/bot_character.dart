@@ -10,15 +10,15 @@ import '../../view/game/bot_reaction.dart';
 
 /// Represents a real Lichess bot account that kids can challenge.
 enum BotCharacter {
-  // ~704 rapid — PARTNER3615DIAGO, 2,955+ rapid games, reliably online
+  // ~458 rapid — StupidfishBOTBYDSCS, deliberately blunder-heavy Stockfish variant
   bee(
     id: 'bee',
     name: 'Bella the Bee',
     emoji: '🐝',
     svgAsset: 'assets/bot_avatars/bee.svg',
     imageDir: 'assets/bot_avatars/bee',
-    lichessUsername: 'PARTNER3615DIAGO',
-    approxRating: 704,
+    lichessUsername: 'StupidfishBOTBYDSCS',
+    approxRating: 458,
     stockfishFallbackLevel: 1,
     description: "I'm just a little bee — I buzz around and make lots of mistakes!",
     difficulty: '⭐ Beginner',
