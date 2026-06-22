@@ -13,7 +13,7 @@ import urllib.request
 from datetime import datetime, timezone
 
 BOTS = [
-    {"name": "Bella the Bee", "username": "PARTNER3615DIAGO", "fallback": "SF 1"},
+    {"name": "Bella the Bee", "username": "StupidfishBOTBYDSCS", "fallback": "SF 1"},
     {"name": "Flutter the Butterfly", "username": "dala-700", "fallback": "SF 1"},
     {"name": "Zip the Hummingbird", "username": "larryz-alterego", "fallback": "SF 1"},
     {"name": "Rosie the Rabbit", "username": "uSunfish-l0", "fallback": "SF 1"},
