@@ -65,8 +65,8 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
 
     final size = MediaQuery.of(context).size;
     final padding = MediaQuery.of(context).padding;
-    // Reserve space for: move counter + gaps + nav controls row
-    const chromHeight = 100.0;
+    // Reserve space for: move counter + gaps + nav controls row + bottom padding
+    const chromHeight = 124.0;
     final availableHeight =
         size.height - kToolbarHeight - padding.top - padding.bottom - chromHeight;
     final boardSize =
@@ -158,6 +158,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                   ),
                 ],
               ),
+          const SizedBox(height: 24),
         ],
       ),
     );
