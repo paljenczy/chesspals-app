@@ -63,88 +63,85 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
     final position = _positions[_currentPly];
     final lastMove = _lastMoves[_currentPly];
 
+    final size = MediaQuery.of(context).size;
+    final padding = MediaQuery.of(context).padding;
+    // Reserve space for: move counter + gaps + nav controls row
+    const chromHeight = 100.0;
+    final availableHeight =
+        size.height - kToolbarHeight - padding.top - padding.bottom - chromHeight;
+    final boardSize =
+        (size.width < availableHeight ? size.width : availableHeight)
+            .clamp(200.0, double.infinity);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l.analysisTitle),
         centerTitle: true,
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // constraints.maxHeight is unbounded on Flutter web when LayoutBuilder
-          // is the direct Scaffold body child — use MediaQuery instead.
-          final viewportHeight = MediaQuery.of(context).size.height;
-          const appBarHeight = 56.0;
-          const chromHeight = 120.0; // counter + gaps + nav controls
-          final available = viewportHeight - appBarHeight - chromHeight;
-          final boardSize = (constraints.maxWidth < available
-                  ? constraints.maxWidth
-                  : available)
-              .clamp(200.0, double.infinity);
+      body: Column(
+        children: [
+          const SizedBox(height: 8),
 
-          return Column(
+          // Move counter
+          Text(
+            _totalPlies > 0
+                ? l.analysisMoveCounter(_currentPly, _totalPlies)
+                : '',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Board
+          Center(
+            child: SizedBox(
+              width: boardSize,
+              height: boardSize,
+              child: Chessboard(
+                size: boardSize,
+                orientation: widget.playerSide,
+                fen: position.fen,
+                lastMove: lastMove,
+                game: GameData(
+                  playerSide: PlayerSide.none,
+                  sideToMove: position.turn,
+                  isCheck: position.isCheck,
+                  validMoves: IMap<Square, ISet<Square>>(),
+                  promotionMove: null,
+                  onMove: (_, {viaDragAndDrop}) {},
+                  onPromotionSelection: (_) {},
+                ),
+                settings: ChessboardSettings(
+                  colorScheme: ref.watch(boardThemeProvider).colorScheme,
+                  pieceAssets: PieceSet.cburnett.assets,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Navigation controls
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 8),
-
-              // Move counter
-              Text(
-                _totalPlies > 0
-                    ? l.analysisMoveCounter(_currentPly, _totalPlies)
-                    : '',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w600,
-                ),
+              IconButton.filled(
+                onPressed: _currentPly > 0 ? () => _goTo(0) : null,
+                icon: const Icon(Icons.skip_previous),
+                tooltip: 'Start',
               ),
-              const SizedBox(height: 8),
-
-              // Board
-              Center(
-                child: SizedBox(
-                  width: boardSize,
-                  height: boardSize,
-                  child: Chessboard(
-                    size: boardSize,
-                    orientation: widget.playerSide,
-                    fen: position.fen,
-                    lastMove: lastMove,
-                    game: GameData(
-                      playerSide: PlayerSide.none,
-                      sideToMove: position.turn,
-                      isCheck: position.isCheck,
-                      validMoves: IMap<Square, ISet<Square>>(),
-                      promotionMove: null,
-                      onMove: (_, {viaDragAndDrop}) {},
-                      onPromotionSelection: (_) {},
-                    ),
-                    settings: ChessboardSettings(
-                      colorScheme: ref.watch(boardThemeProvider).colorScheme,
-                      pieceAssets: PieceSet.cburnett.assets,
-                    ),
-                  ),
-                ),
+              const SizedBox(width: 12),
+              IconButton.filled(
+                onPressed:
+                    _currentPly > 0 ? () => _goTo(_currentPly - 1) : null,
+                icon: const Icon(Icons.chevron_left),
+                tooltip: 'Previous',
               ),
-
-              const SizedBox(height: 16),
-
-              // Navigation controls
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton.filled(
-                    onPressed: _currentPly > 0 ? () => _goTo(0) : null,
-                    icon: const Icon(Icons.skip_previous),
-                    tooltip: 'Start',
-                  ),
-                  const SizedBox(width: 12),
-                  IconButton.filled(
-                    onPressed:
-                        _currentPly > 0 ? () => _goTo(_currentPly - 1) : null,
-                    icon: const Icon(Icons.chevron_left),
-                    tooltip: 'Previous',
-                  ),
-                  const SizedBox(width: 12),
-                  IconButton.filled(
+              const SizedBox(width: 12),
+              IconButton.filled(
                     onPressed: _currentPly < _positions.length - 1
                         ? () => _goTo(_currentPly + 1)
                         : null,
@@ -161,9 +158,7 @@ class _AnalysisScreenState extends ConsumerState<AnalysisScreen> {
                   ),
                 ],
               ),
-            ],
-          );
-        },
+        ],
       ),
     );
   }
