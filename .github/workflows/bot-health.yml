@@ -2,7 +2,7 @@ name: Bot Health Check
 
 on:
   schedule:
-    - cron: '23 8 * * 1'  # Every Monday ~8:23 UTC
+    - cron: '17 * * * *'  # Every hour
   workflow_dispatch:        # Manual trigger from GitHub UI
 
 permissions:
