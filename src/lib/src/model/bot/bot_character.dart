@@ -38,20 +38,6 @@ enum BotCharacter {
     difficulty: '⭐⭐ Explorer',
     colorHex: 0xFFCE93D8,
   ),
-  // ~884 rapid — larryz-alterego, Turochamp-style beginner bot, 6,044+ rapid games
-  hummingbird(
-    id: 'hummingbird',
-    name: 'Zip the Hummingbird',
-    emoji: '🐦',
-    svgAsset: 'assets/bot_avatars/hummingbird.svg',
-    imageDir: 'assets/bot_avatars/hummingbird',
-    lichessUsername: 'larryz-alterego',
-    approxRating: 884,
-    stockfishFallbackLevel: 1,
-    description: "I move super fast — blink and you'll miss my tricks!",
-    difficulty: '⭐⭐ Speedy',
-    colorHex: 0xFF80DEEA,
-  ),
   // ~896 rapid — uSunfish-l0, MicroPython Sunfish on ESP32, 3,245+ rapid games
   rabbit(
     id: 'rabbit',
@@ -65,6 +51,20 @@ enum BotCharacter {
     description: "I hop around quickly — watch out, I can be tricky!",
     difficulty: '⭐⭐⭐ Tricky',
     colorHex: 0xFFFFCDD2,
+  ),
+  // ~972 rapid — nittedal, human-like beginner bot, 1,306+ rapid games
+  hummingbird(
+    id: 'hummingbird',
+    name: 'Zip the Hummingbird',
+    emoji: '🐦',
+    svgAsset: 'assets/bot_avatars/hummingbird.svg',
+    imageDir: 'assets/bot_avatars/hummingbird',
+    lichessUsername: 'nittedal',
+    approxRating: 972,
+    stockfishFallbackLevel: 1,
+    description: "I move super fast — blink and you'll miss my tricks!",
+    difficulty: '⭐⭐ Speedy',
+    colorHex: 0xFF80DEEA,
   ),
   // ~1016 rapid — dala-900, Elo-aligned neural network, 114+ rapid games
   kangaroo(
