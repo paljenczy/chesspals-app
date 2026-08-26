@@ -9,6 +9,7 @@ Usage:
 
 import json
 import sys
+import time
 import urllib.request
 from datetime import datetime, timezone
 
@@ -29,24 +30,16 @@ STALE_DAYS = 30
 OFFLINE_DAYS = 3
 
 
-def check_bot(username: str) -> dict:
-    url = f"https://lichess.org/api/user/{username}"
-    req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            data = json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return {"exists": False, "online": False, "seen": None, "disabled": False}
-        raise
+BULK_URL = "https://lichess.org/api/users"
 
+
+def _parse_user(data: dict) -> dict:
     seen_at = data.get("seenAt")
     seen_dt = None
     days_ago = None
     if seen_at:
         seen_dt = datetime.fromtimestamp(seen_at / 1000, tz=timezone.utc)
         days_ago = (datetime.now(timezone.utc) - seen_dt).days
-
     return {
         "exists": True,
         "online": data.get("online", False),
@@ -57,14 +50,38 @@ def check_bot(username: str) -> dict:
     }
 
 
+def fetch_all_bots(usernames: list[str]) -> dict[str, dict]:
+    body = ",".join(usernames).encode()
+    req = urllib.request.Request(
+        BULK_URL,
+        data=body,
+        headers={"Accept": "application/json", "Content-Type": "text/plain"},
+        method="POST",
+    )
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                users = json.loads(resp.read())
+                return {u["id"].lower(): _parse_user(u) for u in users}
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            raise
+    return {}
+
+
 def main():
     ci_mode = "--ci" in sys.argv
     json_mode = "--json" in sys.argv
     results = []
     problems = []
 
+    usernames = [b["username"] for b in BOTS]
+    bot_data = fetch_all_bots(usernames)
+
     for bot in BOTS:
-        info = check_bot(bot["username"])
+        info = bot_data.get(bot["username"].lower(), {"exists": False, "online": False, "seen": None, "disabled": False})
         status = "OK"
         problem = None
 
