@@ -7,8 +7,8 @@ allowed-tools: Bash(git *), Bash(gh *)
 
 ## Release ChessPals
 
-Repo root: `.`
-pubspec: `./src/pubspec.yaml`
+Run all commands from the repository root.
+pubspec: `src/pubspec.yaml`
 
 Walk through every step below in order. Do not skip steps. After each step tell the user what you did and what comes next.
 
@@ -17,7 +17,7 @@ Walk through every step below in order. Do not skip steps. After each step tell 
 ### Step 1 — Check working tree is clean
 
 ```bash
-git -C . status --short
+git status --short
 ```
 
 If there are uncommitted changes, stop and tell the user to commit or stash them first. Do not proceed.
@@ -29,7 +29,7 @@ If there are uncommitted changes, stop and tell the user to commit or stash them
 Read the current version from `pubspec.yaml`:
 
 ```bash
-grep '^version:' ./src/pubspec.yaml
+grep '^version:' src/pubspec.yaml
 ```
 
 The format is `version: SEMVER+BUILDNUM` (e.g. `1.0.0+1`).
@@ -62,9 +62,9 @@ Double-check all three edits look correct before continuing.
 ### Step 4 — Commit the version bump
 
 ```bash
-git -C . add src/pubspec.yaml src/lib/l10n/app_en.arb src/lib/l10n/app_hu.arb
-git -C . commit -m "Bump version to vVERSION"
-git -C . push
+git add src/pubspec.yaml src/lib/l10n/app_en.arb src/lib/l10n/app_hu.arb
+git commit -m "Bump version to vVERSION"
+git push
 ```
 
 Replace VERSION with the semver part (e.g. `1.1.0`).
@@ -82,8 +82,8 @@ Wait for the user's answer. It can be a few bullet points or a sentence. Write i
 ### Step 6 — Create and push the git tag
 
 ```bash
-git -C . tag vVERSION
-git -C . push origin vVERSION
+git tag vVERSION
+git push origin vVERSION
 ```
 
 Replace VERSION with the semver (e.g. `v1.1.0`).
