@@ -52,15 +52,15 @@ enum BotCharacter {
     difficulty: '⭐⭐⭐ Tricky',
     colorHex: 0xFFFFCDD2,
   ),
-  // ~972 rapid — nittedal, human-like beginner bot, 1,306+ rapid games
+  // ~970 rapid — maia3-79m_600, Maia human-like neural net (CSSLab), run 24/7, 1,900+ rapid games
   hummingbird(
     id: 'hummingbird',
     name: 'Zip the Hummingbird',
     emoji: '🐦',
     svgAsset: 'assets/bot_avatars/hummingbird.svg',
     imageDir: 'assets/bot_avatars/hummingbird',
-    lichessUsername: 'nittedal',
-    approxRating: 972,
+    lichessUsername: 'maia3-79m_600',
+    approxRating: 970,
     stockfishFallbackLevel: 1,
     description: "I move super fast — blink and you'll miss my tricks!",
     difficulty: '⭐⭐ Speedy',
@@ -198,8 +198,8 @@ class BotService {
       return await _client.challengeUser(
         username: character.lichessUsername,
         color: color,
-        clockLimit: 1440,
-        clockIncrement: 0,
+        clockLimit: botClockLimitSeconds,
+        clockIncrement: botClockIncrementSeconds,
         rated: false,
       );
     } catch (e) {
@@ -207,8 +207,8 @@ class BotService {
       return _client.challengeAi(
         level: character.stockfishFallbackLevel,
         color: color,
-        clockLimit: 10800,
-        clockIncrement: 0,
+        clockLimit: aiClockLimitSeconds,
+        clockIncrement: aiClockIncrementSeconds,
       );
     }
   }

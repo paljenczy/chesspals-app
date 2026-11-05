@@ -69,7 +69,7 @@ class LichessClient {
   // ─── Bot Games ─────────────────────────────────────────────────────────────
 
   /// POST /api/challenge/{username} — Challenge a specific Lichess bot account.
-  /// Used for all bot characters (uSunfish-l0, nittedal, maia1, maia5, maia9, etc.)
+  /// Used for all bot characters (uSunfish-l0, maia3-79m_600, dala-900, etc.)
   /// Requires board:play OAuth scope.
   Future<String> challengeUser({
     required String username,
