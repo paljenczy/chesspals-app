@@ -175,6 +175,21 @@ class BotService {
 
   BotService(this._client);
 
+  // Longest practical real-time clock, so kids are never under time pressure.
+  // These are the single source of truth for the bot time control — the game
+  // screen's Stockfish fallback reads them too, so the two call sites can never
+  // drift apart.
+  //
+  // NOTE: the clock is NOT why a game can hang on "Connecting". A bot challenge
+  // can be created (POST returns 200) and then declined or ignored, which does
+  // not raise an error here, so the game never starts. That stall is handled in
+  // OnlineGameScreen's connect timeout, which aborts and falls back to Stockfish.
+  static const int botClockLimitSeconds = 1440; // 24 min
+  static const int botClockIncrementSeconds = 0;
+  // Stockfish AI accepts any valid clock, so the fallback can run even longer.
+  static const int aiClockLimitSeconds = 10800; // 3 h (Lichess real-time max)
+  static const int aiClockIncrementSeconds = 0;
+
   Future<String> challengeBot(
     BotCharacter character, {
     String color = 'white',

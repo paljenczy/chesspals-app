@@ -72,6 +72,16 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
   static const _watchdogTimeout = Duration(seconds: 30);
   Timer? _watchdogTimer;
 
+  // ─── Initial connect timeout ───────────────────────────────────────────────
+  // A bot challenge can be created (POST returns 200) yet never accepted — the
+  // bot is offline, busy, or declines the time control. In that case gameFull
+  // never arrives and the screen would hang on "Connecting" forever. If we are
+  // not connected within this budget, fall back to the Stockfish AI (bot games)
+  // or surface an error (human games) so the child is never stuck.
+  static const _connectTimeout = Duration(seconds: 12);
+  Timer? _connectTimer;
+  bool _fallbackAttempted = false;
+
   // ─── Clock state ───────────────────────────────────────────────────────────
   int _whiteTimeMs = 0;
   int _blackTimeMs = 0;
@@ -108,7 +118,54 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
       _playerSide = Side.white;
     }
     _subscribeToGame();
+    _startConnectTimer();
     if (widget.characterIndex != null) ReactionAudio.preload();
+  }
+
+  void _startConnectTimer() {
+    _connectTimer?.cancel();
+    if (_connected) return;
+    _connectTimer = Timer(_connectTimeout, _handleConnectTimeout);
+  }
+
+  Future<void> _handleConnectTimeout() async {
+    if (!mounted || _connected || _gameOver) return;
+    final character = _character;
+    if (character == null) {
+      // Human game — don't silently hang; show a retryable error.
+      setState(() => _error = 'Timed out waiting for the game to start.');
+      return;
+    }
+    if (_fallbackAttempted) {
+      setState(() => _error = 'Could not reach the bot.');
+      return;
+    }
+    _fallbackAttempted = true;
+
+    // Tear down the stalled stream and cancel the pending (unaccepted) challenge.
+    _gameSub?.cancel();
+    _watchdogTimer?.cancel();
+    try {
+      await _client.abort(widget.gameId);
+    } catch (_) {
+      // Challenge may not be abortable (never became a game) — ignore.
+    }
+
+    try {
+      final newId = await _client.challengeAi(
+        level: character.stockfishFallbackLevel,
+        color: widget.playerSide,
+        clockLimit: BotService.aiClockLimitSeconds,
+        clockIncrement: BotService.aiClockIncrementSeconds,
+      );
+      if (!mounted) return;
+      context.go(
+        '/game/$newId?side=${widget.playerSide}&from=${widget.from}&char=${widget.characterIndex}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.toString());
+    }
   }
 
   void _subscribeToGame({int retryCount = 0}) {
@@ -163,6 +220,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
         final myId = account.id.toLowerCase();
         final isWhite = whiteId == myId;
         final opponent = isWhite ? black : white;
+        _connectTimer?.cancel();
         setState(() {
           _playerSide = isWhite ? Side.white : Side.black;
           _connected = true;
@@ -170,6 +228,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
           _opponentRating = (opponent?['rating'] as num?)?.toInt();
         });
       } else {
+        _connectTimer?.cancel();
         setState(() => _connected = true);
       }
       final state = event['state'] as Map<String, dynamic>?;
@@ -553,6 +612,7 @@ class _OnlineGameScreenState extends ConsumerState<OnlineGameScreen> {
     _clockTimer?.cancel();
     _botThinkTimer?.cancel();
     _watchdogTimer?.cancel();
+    _connectTimer?.cancel();
     if (widget.characterIndex != null) ReactionAudio.dispose();
     super.dispose();
   }
