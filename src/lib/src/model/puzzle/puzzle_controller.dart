@@ -22,6 +22,7 @@ class PuzzleState {
     this.result,
     this.lastMove,
     this.hintSquare,
+    this.pendingPromotion,
     this.positionHistory = const [],
     this.moveHistory = const [],
     this.reviewIndex = 0,
@@ -36,6 +37,7 @@ class PuzzleState {
   final PuzzleResult? result;
   final NormalMove? lastMove;
   final Square? hintSquare;
+  final NormalMove? pendingPromotion;
   final List<Position> positionHistory;
   final List<NormalMove> moveHistory;
   final int reviewIndex;
@@ -61,12 +63,14 @@ class PuzzleState {
     PuzzleResult? result,
     NormalMove? lastMove,
     Square? hintSquare,
+    NormalMove? pendingPromotion,
     List<Position>? positionHistory,
     List<NormalMove>? moveHistory,
     int? reviewIndex,
     bool clearResult = false,
     bool clearHint = false,
     bool clearLastMove = false,
+    bool clearPromotion = false,
   }) =>
       PuzzleState(
         puzzle: puzzle,
@@ -78,6 +82,9 @@ class PuzzleState {
         result: clearResult ? null : (result ?? this.result),
         lastMove: clearLastMove ? null : (lastMove ?? this.lastMove),
         hintSquare: clearHint ? null : (hintSquare ?? this.hintSquare),
+        pendingPromotion: clearPromotion
+            ? null
+            : (pendingPromotion ?? this.pendingPromotion),
         positionHistory: positionHistory ?? this.positionHistory,
         moveHistory: moveHistory ?? this.moveHistory,
         reviewIndex: reviewIndex ?? this.reviewIndex,
@@ -205,6 +212,20 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
     if (current == null || current.result != null) return;
     if (current.mode != PuzzleMode.solving) return;
 
+    // If the user moves a pawn to the last rank without choosing a piece,
+    // open the promotion selector instead of processing the move yet.
+    final piece = current.position.board.pieceAt(rawMove.from);
+    if (piece?.role == Role.pawn && rawMove.promotion == null) {
+      final toRank = rawMove.to.rank;
+      final needsPromotion =
+          (current.position.turn == Side.white && toRank == Rank.eighth) ||
+          (current.position.turn == Side.black && toRank == Rank.first);
+      if (needsPromotion) {
+        state = AsyncData(current.copyWith(pendingPromotion: rawMove));
+        return;
+      }
+    }
+
     final expectedUci = current.puzzle.solution[current.solutionIndex];
     final moveUci = rawMove.uci;
 
@@ -315,6 +336,25 @@ class PuzzleController extends AsyncNotifier<PuzzleState?> {
     } else {
       stars.recordImperfectSolve();
     }
+  }
+
+  /// Handle the user's piece choice from the promotion selector.
+  void onPromotion(Role? role) {
+    final current = state.value;
+    final pending = current?.pendingPromotion;
+    if (current == null || pending == null) return;
+    // Cancelled selection: just dismiss the selector.
+    if (role == null) {
+      state = AsyncData(current.copyWith(clearPromotion: true));
+      return;
+    }
+    final promotionMove = NormalMove(
+      from: pending.from,
+      to: pending.to,
+      promotion: role,
+    );
+    state = AsyncData(current.copyWith(clearPromotion: true));
+    onMove(promotionMove);
   }
 
   void showHint() {

@@ -138,11 +138,11 @@ class _PuzzleView extends ConsumerWidget {
                       validMoves: state.validMoves,
                       sideToMove: state.sideToMove,
                       isCheck: state.isCheck,
-                      promotionMove: null,
+                      promotionMove: state.pendingPromotion,
                       onMove: (move, {viaDragAndDrop}) => controller.onMove(
                           move,
                           viaDragAndDrop: viaDragAndDrop),
-                      onPromotionSelection: (_) {},
+                      onPromotionSelection: controller.onPromotion,
                     ),
                     settings: ChessboardSettings(
                       colorScheme: ref.watch(boardThemeProvider).colorScheme,
