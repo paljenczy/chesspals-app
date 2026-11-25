@@ -1,6 +1,6 @@
 name: chesspals
 description: A kid-friendly chess app — bot play, puzzles, and safe human matchmaking.
-version: 1.0.3+4
+version: 1.0.4+5
 publish_to: 'none'
 
 environment:
